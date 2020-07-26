@@ -8,6 +8,7 @@
 #include "LE_HUD.generated.h"
 
 class UIndicatorsUI;
+class UMenuUI;
 class UGameInstance;
 
 UCLASS()
@@ -49,5 +50,10 @@ protected:
 		TSubclassOf<UIndicatorsUI> IndicatorsUIClass;
 
 	UIndicatorsUI* IndicatorsUI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<UMenuUI> MenuUIClass;
+
+	UMenuUI* MenuUI;
 
 };

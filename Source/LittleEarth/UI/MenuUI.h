@@ -24,6 +24,10 @@ public:
 		}
 	}
 
+	UFUNCTION(BlueprintCallable)
+		void ToggleIsOpen() {
+		SetIsOpen(!IsOpen);
+	}
 
 protected:
 
