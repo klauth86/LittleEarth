@@ -5,11 +5,8 @@
 #include "Engine/CollisionProfile.h"
 
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "Components/PawnMovementComponent_Base.h"
 
 #include "Utils/LogManager.h"
-#include "Utils/EnumHelper.h"
 
 TArray<ACharacterBase*> ACharacterBase::AllInstances;
 

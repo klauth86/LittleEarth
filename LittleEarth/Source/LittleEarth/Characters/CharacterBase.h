@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Movement/ActorWithMovementContext.h"
 #include "CharacterBase.generated.h"
 
 class UCapsuleComponent;
