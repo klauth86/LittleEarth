@@ -21,19 +21,14 @@ public:
 protected:
 
 	UPROPERTY(Category = CharacterBase, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		USkeletalMeshComponent* Mesh;
-
-	UPROPERTY(Category = CharacterBase, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		UCapsuleComponent* CapsuleComponent;
+		USkeletalMeshComponent* MeshComponent;
 
 	UPROPERTY(Category = CharacterBase, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		UPawnMovementComponent_Base* CharacterMovementComponent;
 
 public:
 
-	FORCEINLINE USkeletalMeshComponent* GetMesh() const { return Mesh; }
-
-	FORCEINLINE UCapsuleComponent* GetCapsuleComponent() const { return CapsuleComponent; }
+	FORCEINLINE USkeletalMeshComponent* GetMeshComponent() const { return MeshComponent; }
 
 	FORCEINLINE UPawnMovementComponent_Base* GetCharacterMovementComponent() const { return CharacterMovementComponent; }
 

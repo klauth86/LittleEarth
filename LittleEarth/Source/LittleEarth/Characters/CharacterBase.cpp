@@ -27,33 +27,24 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = true;
 
-	RootComponent = CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("Capsule");
-	CapsuleComponent->InitCapsuleSize(34.0f, 88.0f);
-	CapsuleComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-
-	CapsuleComponent->CanCharacterStepUpOn = ECB_No;
-	CapsuleComponent->SetShouldUpdatePhysicsVolume(true);
-	CapsuleComponent->SetCanEverAffectNavigation(false);
-	CapsuleComponent->bDynamicObstacle = true;
+	MeshComponent = CreateOptionalDefaultSubobject<USkeletalMeshComponent>("Mesh");
+	if (MeshComponent) {
+		MeshComponent->AlwaysLoadOnClient = true;
+		MeshComponent->AlwaysLoadOnServer = true;
+		MeshComponent->bOwnerNoSee = false;
+		MeshComponent->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
+		MeshComponent->bCastDynamicShadow = true;
+		MeshComponent->bAffectDynamicIndirectLighting = true;
+		MeshComponent->PrimaryComponentTick.TickGroup = TG_PrePhysics;
+		MeshComponent->SetupAttachment(RootComponent);
+		MeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
+		MeshComponent->SetGenerateOverlapEvents(true);
+		MeshComponent->SetShouldUpdatePhysicsVolume(true);
+		MeshComponent->SetCanEverAffectNavigation(true);
+	}
 
 	CharacterMovementComponent = CreateDefaultSubobject<UPawnMovementComponent_Base>("CharacterMovement");
-	CharacterMovementComponent->SetUpdatedComponent(CapsuleComponent);
-
-	Mesh = CreateOptionalDefaultSubobject<USkeletalMeshComponent>("Mesh");
-	if (Mesh) {
-		Mesh->AlwaysLoadOnClient = true;
-		Mesh->AlwaysLoadOnServer = true;
-		Mesh->bOwnerNoSee = false;
-		Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
-		Mesh->bCastDynamicShadow = true;
-		Mesh->bAffectDynamicIndirectLighting = true;
-		Mesh->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-		Mesh->SetupAttachment(CapsuleComponent);
-
-		Mesh->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-		Mesh->SetGenerateOverlapEvents(false);
-		Mesh->SetCanEverAffectNavigation(false);
-	}
+	CharacterMovementComponent->SetUpdatedComponent(RootComponent);
 }
 
 void ACharacterBase::BeginPlay() {

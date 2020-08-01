@@ -17,9 +17,6 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
 
-	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
 	// Don't rotate when the controller rotates.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
