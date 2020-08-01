@@ -121,7 +121,7 @@ bool APlayerBase::TurnToDirection(FVector direction) {
 
 	LogManager::LogWarning(TEXT("____ FOR[%s] DIR[%s] RATIO[%f]"), *forward.ToString(), *direction.ToString(), ratio);
 
-	if (ratio < SMALL_NUMBER)
+	if (ratio < THRESH_SPLIT_POLY_PRECISELY)
 		return true;
 
 	const FVector Torque = FVector(0.f, 0.f, 1000 * ratio * MovementPower *TurnArm);
