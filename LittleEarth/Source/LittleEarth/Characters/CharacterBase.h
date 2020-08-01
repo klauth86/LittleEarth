@@ -10,7 +10,7 @@ class USkeletalMeshComponent;
 class UPawnMovementComponent_Base;
 
 UCLASS(Blueprintable)
-class ACharacterBase : public APawn, public IActorWithMovementContext {
+class ACharacterBase : public APawn {
 
 	GENERATED_BODY()
 
@@ -23,14 +23,9 @@ protected:
 	UPROPERTY(Category = CharacterBase, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		USkeletalMeshComponent* MeshComponent;
 
-	UPROPERTY(Category = CharacterBase, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		UPawnMovementComponent_Base* CharacterMovementComponent;
-
 public:
 
 	FORCEINLINE USkeletalMeshComponent* GetMeshComponent() const { return MeshComponent; }
-
-	FORCEINLINE UPawnMovementComponent_Base* GetCharacterMovementComponent() const { return CharacterMovementComponent; }
 
 public:
 
@@ -43,8 +38,6 @@ public:
 	virtual FVector ConsumeMovementInputVector() override;
 
 	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
-
-	virtual void FillContext(FMovementContext_Eval& context);
 
 public:
 

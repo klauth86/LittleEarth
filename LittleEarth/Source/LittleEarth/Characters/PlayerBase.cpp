@@ -22,10 +22,6 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	GetCharacterMovementComponent()->CharacterContext.bOrientRotationToMovement = true;
-	GetCharacterMovementComponent()->CharacterContext.RotationRate = FRotator(0.0f, 540.0f, 0.0f);
-	GetCharacterMovementComponent()->CharacterContext.JumpZVelocity = 600;
-
 	// Create a camera boom (pulls in towards the player if there is a collision)
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);

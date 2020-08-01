@@ -27,46 +27,26 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = true;
 
-	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
-
-	MeshComponent = CreateOptionalDefaultSubobject<USkeletalMeshComponent>("Mesh");
+	RootComponent = MeshComponent = CreateOptionalDefaultSubobject<USkeletalMeshComponent>("Mesh");
 	if (MeshComponent) {
-		MeshComponent->AlwaysLoadOnClient = true;
-		MeshComponent->AlwaysLoadOnServer = true;
-		MeshComponent->bOwnerNoSee = false;
-		MeshComponent->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPose;
-		MeshComponent->bCastDynamicShadow = true;
-		MeshComponent->bAffectDynamicIndirectLighting = true;
-		MeshComponent->PrimaryComponentTick.TickGroup = TG_PrePhysics;
-		MeshComponent->SetupAttachment(RootComponent);
-		MeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-		MeshComponent->SetGenerateOverlapEvents(true);
-		MeshComponent->SetShouldUpdatePhysicsVolume(true);
-		MeshComponent->SetCanEverAffectNavigation(true);
+		MeshComponent->BodyInstance.SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
+		MeshComponent->SetSimulatePhysics(true);
+		MeshComponent->SetAngularDamping(0.1f);
+		MeshComponent->SetLinearDamping(0.1f);
+		MeshComponent->BodyInstance.MassScale = 756;
+		MeshComponent->BodyInstance.MaxAngularVelocity = 800.0f;
+		MeshComponent->SetNotifyRigidBodyCollision(true);
 	}
-
-	CharacterMovementComponent = CreateDefaultSubobject<UPawnMovementComponent_Base>("CharacterMovement");
-	CharacterMovementComponent->SetUpdatedComponent(RootComponent);
 }
 
 void ACharacterBase::BeginPlay() {
 	Super::BeginPlay();
 	AllInstances.Add(this);
-
-	FVector vector;
-	vector = FVector(100, 0, 0);
-	LogManager::LogWarning(TEXT("__ LOC[%s] ROT[%s] OROT[%s]"), *vector.ToString(), *vector.Rotation().ToString(), *vector.ToOrientationQuat().ToString());
-
-	vector = FVector(0, 100, 0);
-	LogManager::LogWarning(TEXT("__ LOC[%s] ROT[%s] OROT[%s]"), *vector.ToString(), *vector.Rotation().ToString(), *vector.ToOrientationQuat().ToString());
-
-	vector = FVector(0, 0, 100);
-	LogManager::LogWarning(TEXT("__ LOC[%s] ROT[%s] OROT[%s]"), *vector.ToString(), *vector.Rotation().ToString(), *vector.ToOrientationQuat().ToString());
 }
 
 void ACharacterBase::EndPlay(EEndPlayReason::Type EndPlayReason) {
-	Super::EndPlay(EndPlayReason);
 	AllInstances.Remove(this);
+	Super::EndPlay(EndPlayReason);
 }
 
 FVector ACharacterBase::ConsumeMovementInputVector() {
@@ -75,9 +55,4 @@ FVector ACharacterBase::ConsumeMovementInputVector() {
 
 void ACharacterBase::AddMovementInput(FVector WorldDirection, float ScaleValue, bool bForce) {
 	Internal_AddMovementInput(WorldDirection * ScaleValue, bForce);
-}
-
-void ACharacterBase::FillContext(FMovementContext_Eval& context) {
-	context.InputVector = ConsumeMovementInputVector();
-	context.RotationUpdateMode = ERotationUpdateMode::PRIMARY;
 }
