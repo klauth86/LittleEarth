@@ -11,6 +11,7 @@
 
 #include "EngineUtils.h"
 #include "Utils/InputBindingsHelper.h"
+#include "Utils/LogManager.h"
 
 APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer) {
 	
@@ -117,6 +118,8 @@ bool APlayerBase::TurnToDirection(FVector direction) {
 
 	auto dotProduct = (forward | direction);
 	auto ratio = 1 - dotProduct;
+
+	LogManager::LogWarning(TEXT("____ FOR[%s] DIR[%s] RATIO[%f]"), *forward.ToString(), *direction.ToString(), ratio);
 
 	if (ratio < SMALL_NUMBER)
 		return true;
