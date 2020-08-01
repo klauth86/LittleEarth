@@ -3,6 +3,7 @@
 #include "PlayerBase.h"
 #include "Components/PawnMovementComponent_Base.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
@@ -16,6 +17,9 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 	// set our turn rates for input
 	BaseTurnRate = 45.f;
 	BaseLookUpRate = 45.f;
+
+	MovementPower = 1000;
+	TurnArm = 1;
 
 	// Don't rotate when the controller rotates.
 	bUseControllerRotationPitch = false;
@@ -71,6 +75,7 @@ void APlayerBase::MoveForward(float Value) {
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
+		ProcessMovementInput();
 	}
 }
 
@@ -84,15 +89,41 @@ void APlayerBase::MoveRight(float Value) {
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
+		ProcessMovementInput();
+	}
+}
+
+void APlayerBase::ProcessMovementInput() {
+	auto input = ConsumeMovementInputVector();
+	auto direction = input.GetSafeNormal();
+
+	if (direction != FVector::ZeroVector) {
+		if (TurnToDirection(direction)) {
+			MeshComponent->AddImpulse(input * MovementPower);
+		}
 	}
 }
 
 void APlayerBase::TurnAtRate(float Rate) {
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	//AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
 }
 
 void APlayerBase::LookUpAtRate(float Rate) {
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	//AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+}
+
+bool APlayerBase::TurnToDirection(FVector direction) {
+	auto forward = GetActorForwardVector();
+
+	auto dotProduct = (forward | direction);
+	auto ratio = 1 - dotProduct;
+
+	if (ratio < SMALL_NUMBER)
+		return true;
+
+	const FVector Torque = FVector(0.f, 0.f, ratio * MovementPower *TurnArm);
+	MeshComponent->AddTorqueInRadians(Torque);	
+	return false;
 }
 
 void APlayerBase::NotifyActorBeginOverlap(AActor* OtherActor) {

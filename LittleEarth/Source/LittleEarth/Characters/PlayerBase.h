@@ -18,9 +18,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseTurnRate;
 
-	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 		float BaseLookUpRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MovementEngine)
+		float MovementPower;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MovementEngine)
+		float TurnArm;
 
 protected:
 
@@ -50,9 +55,13 @@ protected:
 
 	void MoveRight(float Value);
 
+	void ProcessMovementInput();
+
 	void TurnAtRate(float Rate);
 
 	void LookUpAtRate(float Rate);
+
+	bool TurnToDirection(FVector direction);
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 };
