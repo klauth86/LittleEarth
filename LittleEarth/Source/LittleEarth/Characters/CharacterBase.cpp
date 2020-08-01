@@ -27,6 +27,8 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = true;
 
+	RootComponent = CreateDefaultSubobject<USceneComponent>("Root");
+
 	MeshComponent = CreateOptionalDefaultSubobject<USkeletalMeshComponent>("Mesh");
 	if (MeshComponent) {
 		MeshComponent->AlwaysLoadOnClient = true;
