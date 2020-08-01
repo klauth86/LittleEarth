@@ -124,7 +124,7 @@ bool APlayerBase::TurnToDirection(FVector direction) {
 	if (ratio < SMALL_NUMBER)
 		return true;
 
-	const FVector Torque = FVector(0.f, 0.f, ratio * MovementPower *TurnArm);
+	const FVector Torque = FVector(0.f, 0.f, 1000 * ratio * MovementPower *TurnArm);
 	MeshComponent->AddTorqueInRadians(Torque);	
 	return false;
 }

@@ -31,7 +31,7 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 	if (MeshComponent) {
 		MeshComponent->BodyInstance.SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
 		MeshComponent->SetSimulatePhysics(true);
-		MeshComponent->SetAngularDamping(0.1f);
+		MeshComponent->SetAngularDamping(0.5f);
 		MeshComponent->SetLinearDamping(0.1f);
 		MeshComponent->BodyInstance.MassScale = 756;
 		MeshComponent->BodyInstance.MaxAngularVelocity = 800.0f;
