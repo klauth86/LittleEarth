@@ -114,17 +114,24 @@ void APlayerBase::LookUpAtRate(float Rate) {
 
 bool APlayerBase::TurnToDirection(FVector direction) {
 	auto forward = GetActorForwardVector();
+	auto up = GetActorUpVector();
 
-	auto dotProduct = (forward | direction);
-	auto ratio = 1 - dotProduct;
+	auto rotationVector = FVector::CrossProduct(forward, direction);
+	auto ratio = (rotationVector | up);
 
 	LogManager::LogWarning(TEXT("____ FOR[%s] DIR[%s] RATIO[%f]"), *forward.ToString(), *direction.ToString(), ratio);
 
 	if (ratio < THRESH_SPLIT_POLY_PRECISELY)
 		return true;
 
-	const FVector Torque = FVector(0.f, 0.f, 1000 * ratio * MovementPower *TurnArm);
-	MeshComponent->AddTorqueInRadians(Torque);	
+	MeshComponent->AddImpulse(ratio * MovementPower * forward / 6, FName("Wheel.F.R"));
+	MeshComponent->AddImpulse(ratio * MovementPower * forward / 6, FName("Wheel.M.R"));
+	MeshComponent->AddImpulse(ratio * MovementPower * forward / 6, FName("Wheel.B.R"));
+
+	//MeshComponent->AddImpulse(-ratio * MovementPower * forward / 6, FName("Wheel.F.L"));
+	//MeshComponent->AddImpulse(-ratio * MovementPower * forward / 6, FName("Wheel.M.L"));
+	//MeshComponent->AddImpulse(-ratio * MovementPower * forward / 6, FName("Wheel.B.L"));
+
 	return false;
 }
 
