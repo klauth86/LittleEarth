@@ -39,8 +39,6 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 void ACharacterBase::BeginPlay() {
 	Super::BeginPlay();
 	AllInstances.Add(this);
-
-	MeshComponent->AddRadialForce(FVector::ZeroVector, 100000, 1000, ERadialImpulseFalloff::RIF_Constant, true);
 }
 
 void ACharacterBase::EndPlay(EEndPlayReason::Type EndPlayReason) {

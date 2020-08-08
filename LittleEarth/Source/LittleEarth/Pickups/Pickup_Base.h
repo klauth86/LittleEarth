@@ -19,13 +19,9 @@ public:
 	virtual void PickUp() {	
 
 		Destroy();
-
 		// TODO ADD SFX TO PLAY
-
 		// TODO ADD VFX TO PLAY
 
 	}
-
-protected:
 
 };

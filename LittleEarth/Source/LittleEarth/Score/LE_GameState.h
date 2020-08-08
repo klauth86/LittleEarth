@@ -8,9 +8,7 @@ struct FLE_GameState {
 
 	GENERATED_USTRUCT_BODY()
 
-		FLE_GameState() { Reset(); }
-
-	FLE_GameState(const FLE_GameState& other) { Reset(other); }
+	FLE_GameState() { Reset(); }
 
 	UPROPERTY(EditAnywhere, Category = "Game State", BlueprintReadWrite)
 		int StarsToCollect;
