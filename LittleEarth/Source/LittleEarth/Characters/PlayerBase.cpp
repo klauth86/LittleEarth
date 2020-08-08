@@ -1,14 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PlayerBase.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Camera/CameraComponent.h"
 #include "Components/LE_SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+
 #include "GameFramework/Controller.h"
 #include "GameFramework/PlayerController.h"
+
 #include "Pickups/Pickup_Base.h"
+
 #include "LE_HUD.h"
+
 #include "EngineUtils.h"
 #include "Utils/InputBindingsHelper.h"
 #include "Utils/LogManager.h"
