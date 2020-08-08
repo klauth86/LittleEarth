@@ -3,7 +3,6 @@
 
 #include "PlanetActor.h"
 #include "LE_GameInstance.h"
-#include "Movement/MovementContraints/MovementConstraint_Sphere.h"
 
 APlanetActor::APlanetActor(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer) {
 	PrimaryActorTick.bCanEverTick = true;
@@ -28,12 +27,10 @@ void APlanetActor::Tick(float DeltaSeconds) {
 
 void APlanetActor::BeginPlay() {
 	Super::BeginPlay();
-	UMovementConstraint_Sphere::OnPlayerMoved.AddDynamic(this, &APlanetActor::OnPlayerMoved);
 }
 
 void APlanetActor::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 	Super::EndPlay(EndPlayReason);
-	UMovementConstraint_Sphere::OnPlayerMoved.RemoveDynamic(this, &APlanetActor::OnPlayerMoved);
 }
 
 void APlanetActor::OnPlayerMoved(FVector delta) {

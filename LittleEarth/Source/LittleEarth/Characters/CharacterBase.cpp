@@ -28,9 +28,9 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 	if (MeshComponent) {
 		MeshComponent->BodyInstance.SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
 		MeshComponent->SetSimulatePhysics(true);
+		MeshComponent->SetEnableGravity(false); // WE USE RADIAL FIELDS
 		MeshComponent->SetAngularDamping(0.5f);
 		MeshComponent->SetLinearDamping(0.1f);
-		MeshComponent->BodyInstance.MassScale = 756;
 		MeshComponent->BodyInstance.MaxAngularVelocity = 800.0f;
 		MeshComponent->SetNotifyRigidBodyCollision(true);
 	}
@@ -39,6 +39,8 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 void ACharacterBase::BeginPlay() {
 	Super::BeginPlay();
 	AllInstances.Add(this);
+
+	MeshComponent->AddRadialForce(FVector::ZeroVector, 100000, 1000, ERadialImpulseFalloff::RIF_Constant, true);
 }
 
 void ACharacterBase::EndPlay(EEndPlayReason::Type EndPlayReason) {
