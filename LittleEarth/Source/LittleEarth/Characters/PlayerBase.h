@@ -41,6 +41,11 @@ public:
 
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	void Tick(float DeltaSeconds) override { 
+		Super::Tick(DeltaSeconds);
+		ProcessMovementInput();
+	}
+
 protected:
 
 	UFUNCTION()
@@ -61,7 +66,7 @@ protected:
 
 	void LookUpAtRate(float Rate);
 
-	bool TurnToDirection(FVector direction);
+	bool TurnToDirection(FVector direction, FVector up);
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 };

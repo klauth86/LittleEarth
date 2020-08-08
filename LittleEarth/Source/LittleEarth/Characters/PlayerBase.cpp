@@ -75,7 +75,6 @@ void APlayerBase::MoveForward(float Value) {
 		// get forward vector
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
-		ProcessMovementInput();
 	}
 }
 
@@ -89,18 +88,29 @@ void APlayerBase::MoveRight(float Value) {
 		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 		// add movement in that direction
 		AddMovementInput(Direction, Value);
-		ProcessMovementInput();
 	}
 }
 
 void APlayerBase::ProcessMovementInput() {
 	auto input = ConsumeMovementInputVector();
-	auto direction = input.GetSafeNormal();
+	auto up = GetActorUpVector();
+	auto horInput = input - up * (input | up);
 
+	auto direction = horInput.GetSafeNormal();
 	if (direction != FVector::ZeroVector) {
-		if (TurnToDirection(direction)) {
-			MeshComponent->AddImpulse(input * MovementPower);
+		
+		if (TurnToDirection(direction, up)) {
+
+			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_F_R"));
+			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_M_R"));
+			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_B_R"));
+
+			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_F_L"));
+			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_M_L"));
+			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_B_L"));
+
 		}
+
 	}
 }
 
@@ -112,25 +122,21 @@ void APlayerBase::LookUpAtRate(float Rate) {
 	//AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
 }
 
-bool APlayerBase::TurnToDirection(FVector direction) {
+bool APlayerBase::TurnToDirection(FVector direction, FVector up) {
 	auto forward = GetActorForwardVector();
-	auto up = GetActorUpVector();
-
 	auto rotationVector = FVector::CrossProduct(forward, direction);
 	auto ratio = (rotationVector | up);
-
-	LogManager::LogWarning(TEXT("____ FOR[%s] DIR[%s] RATIO[%f]"), *forward.ToString(), *direction.ToString(), ratio);
 
 	if (ratio < THRESH_SPLIT_POLY_PRECISELY)
 		return true;
 
-	MeshComponent->AddImpulse(ratio * MovementPower * forward / 6, FName("Wheel.F.R"));
-	MeshComponent->AddImpulse(ratio * MovementPower * forward / 6, FName("Wheel.M.R"));
-	MeshComponent->AddImpulse(ratio * MovementPower * forward / 6, FName("Wheel.B.R"));
+	MeshComponent->AddForce(ratio * MovementPower * forward / 6, FName("Wheel_F_R"));
+	MeshComponent->AddForce(ratio * MovementPower * forward / 6, FName("Wheel_M_R"));
+	MeshComponent->AddForce(ratio * MovementPower * forward / 6, FName("Wheel_B_R"));
 
-	//MeshComponent->AddImpulse(-ratio * MovementPower * forward / 6, FName("Wheel.F.L"));
-	//MeshComponent->AddImpulse(-ratio * MovementPower * forward / 6, FName("Wheel.M.L"));
-	//MeshComponent->AddImpulse(-ratio * MovementPower * forward / 6, FName("Wheel.B.L"));
+	MeshComponent->AddForce(-ratio * MovementPower * forward / 6, FName("Wheel_F_L"));
+	MeshComponent->AddForce(-ratio * MovementPower * forward / 6, FName("Wheel_M_L"));
+	MeshComponent->AddForce(-ratio * MovementPower * forward / 6, FName("Wheel_B_L"));
 
 	return false;
 }
