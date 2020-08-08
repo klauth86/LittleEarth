@@ -2,6 +2,8 @@
 
 
 #include "Planet_WithStates.h"
+#include "Interfaces/PhysActor.h"
+#include "Components/PrimitiveComponent.h"
 
 void APlanet_WithStates::Tick_Internal(float DeltaSeconds) {
 	Super::Tick_Internal(DeltaSeconds);
@@ -20,7 +22,7 @@ void APlanet_WithStates::Tick_Internal(float DeltaSeconds) {
 	}
 }
 
-void APlanet_WithStates::Tick_Collapsing(float DeltaSeconds) {}
+void APlanet_WithStates::Tick_Collapsing(float DeltaSeconds) {} // TODO
 
 
 
@@ -40,7 +42,7 @@ void APlanet_WithStates::AddPhysForceToPhysActor_Internal(float DeltaSeconds, IP
 }
 
 void APlanet_WithStates::AddPhysForceToPhysActor_Internal_Stable(float DeltaSeconds, IPhysActor* physActor) {
-
+	physActor->GetPrimitiveComponent()->AddRadialForce(GetActorLocation(), 1000000, 1000000, ERadialImpulseFalloff::RIF_MAX);
 }
 
 void APlanet_WithStates::AddPhysForceToPhysActor_Internal_Collapsing(float DeltaSeconds, IPhysActor* physActor) {
