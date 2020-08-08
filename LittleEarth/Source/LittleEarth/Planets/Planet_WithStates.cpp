@@ -42,7 +42,7 @@ void APlanet_WithStates::AddPhysForceToPhysActor_Internal(float DeltaSeconds, IP
 }
 
 void APlanet_WithStates::AddPhysForceToPhysActor_Internal_Stable(float DeltaSeconds, IPhysActor* physActor) {
-	physActor->GetPrimitiveComponent()->AddRadialForce(GetActorLocation(), 1000000, 1000000, ERadialImpulseFalloff::RIF_MAX);
+	physActor->GetPrimitiveComponent()->AddRadialForce(GetActorLocation(), 1000000, -1000000, ERadialImpulseFalloff::RIF_MAX);
 }
 
 void APlanet_WithStates::AddPhysForceToPhysActor_Internal_Collapsing(float DeltaSeconds, IPhysActor* physActor) {
