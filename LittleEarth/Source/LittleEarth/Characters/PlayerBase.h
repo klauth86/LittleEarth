@@ -41,6 +41,10 @@ public:
 
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	void BeginPlay() override;
+
+	void EndPlay(EEndPlayReason::Type EndPlayReason) override;
+
 	void Tick(float DeltaSeconds) override { 
 		Super::Tick(DeltaSeconds);
 		ProcessMovementInput();
@@ -48,13 +52,13 @@ public:
 
 protected:
 
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	UFUNCTION()
 	void StartJumpInput(bool primaryInput);
 	
 	UFUNCTION()
 	void EndJumpInput(bool primaryInput);
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void MoveForward(float Value);
 

@@ -6,19 +6,16 @@
 #include "UI/MenuUI.h"
 #include "LE_GameInstance.h"
 
-void ALE_HUD::BeginPlay() {
-	Super::BeginPlay();
+void ALE_HUD::Init() {
 
 	Init<UIndicatorsUI>(IndicatorsUIClass, IndicatorsUI, ULE_GameInstance::GetInstance());
 
 	Init<UMenuUI>(MenuUIClass, MenuUI, ULE_GameInstance::GetInstance());
 }
 
-void ALE_HUD::EndPlay(const EEndPlayReason::Type EndPlayReason) {
+void ALE_HUD::UnInit() {
 	
 	UnInit<UIndicatorsUI>(IndicatorsUI);
 
 	UnInit<UMenuUI>(MenuUI);
-
-	Super::EndPlay(EndPlayReason);
 }

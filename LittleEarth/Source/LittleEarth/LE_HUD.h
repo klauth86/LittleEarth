@@ -38,21 +38,19 @@ public:
 		}
 	}
 
-protected:
+	void Init();
 
-	virtual void BeginPlay() override;
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	void UnInit();
 
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<UIndicatorsUI> IndicatorsUIClass;
+	TSubclassOf<UIndicatorsUI> IndicatorsUIClass;
 
 	UIndicatorsUI* IndicatorsUI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<UMenuUI> MenuUIClass;
+	TSubclassOf<UMenuUI> MenuUIClass;
 
 	UMenuUI* MenuUI;
 

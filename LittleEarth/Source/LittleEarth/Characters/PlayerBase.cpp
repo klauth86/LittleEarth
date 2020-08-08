@@ -6,8 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "Components/LE_SpringArmComponent.h"
 #include "GameFramework/Controller.h"
+#include "GameFramework/PlayerController.h"
 #include "Pickups/Pickup_Base.h"
-
+#include "LE_HUD.h"
 #include "EngineUtils.h"
 #include "Utils/InputBindingsHelper.h"
 #include "Utils/LogManager.h"
@@ -139,6 +140,26 @@ bool APlayerBase::TurnToDirection(FVector direction, FVector up) {
 	MeshComponent->AddForce(-ratio * MovementPower * forward / 6, FName("Wheel_B_L"));
 
 	return false;
+}
+
+static ALE_HUD* hud = nullptr;
+
+void APlayerBase::BeginPlay() {
+	Super::BeginPlay();
+
+	auto controller = GetController<APlayerController>();
+	hud = Cast<ALE_HUD>(controller->GetHUD());
+	if (hud) {
+		hud->Init();
+	}
+}
+
+void APlayerBase::EndPlay(EEndPlayReason::Type EndPlayReason) {	
+	if (hud) {
+		hud->UnInit();
+	}
+
+	Super::EndPlay(EndPlayReason);
 }
 
 void APlayerBase::NotifyActorBeginOverlap(AActor* OtherActor) {

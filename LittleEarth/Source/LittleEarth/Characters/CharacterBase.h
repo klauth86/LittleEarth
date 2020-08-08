@@ -5,9 +5,7 @@
 #include "Interfaces/PhysActor.h"
 #include "CharacterBase.generated.h"
 
-class UCapsuleComponent;
 class USkeletalMeshComponent;
-class UPawnMovementComponent_Base;
 
 UCLASS(Blueprintable)
 class ACharacterBase : public APawn, public IPhysActor {
