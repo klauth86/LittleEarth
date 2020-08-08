@@ -7,6 +7,8 @@
 #include "Dicts/PlanetState.h"
 #include "Planet_Base.generated.h"
 
+class IPhysActor;
+
 UCLASS()
 class LITTLEEARTH_API APlanet_Base : public AActor {
 
@@ -21,4 +23,6 @@ public:
 protected:
 
 	virtual void Tick_Internal(float DeltaSeconds);
+
+	virtual void AddPhysForceToPhysActor_Internal(float DeltaSeconds, IPhysActor* physActor) {}
 };

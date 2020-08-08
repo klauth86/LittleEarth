@@ -3,7 +3,6 @@
 
 #include "Planet_Base.h"
 #include "Interfaces/PhysActor.h"
-#include "Components/PrimitiveComponent.h"
 
 APlanet_Base::APlanet_Base(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer) {
 	PrimaryActorTick.bCanEverTick = true;
@@ -11,6 +10,6 @@ APlanet_Base::APlanet_Base(const FObjectInitializer& ObjectInitializer) :Super(O
 
 void APlanet_Base::Tick_Internal(float DeltaSeconds) {
 	for (auto physActor : IPhysActor::GetAllInstances()) {
-		//physActor->GetPrimitiveComponent()->AddRadialForce(GetActorLocation(), );
+		AddPhysForceToPhysActor_Internal(DeltaSeconds, physActor);
 	}
 }
