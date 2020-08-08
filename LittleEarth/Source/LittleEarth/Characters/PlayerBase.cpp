@@ -96,26 +96,29 @@ void APlayerBase::MoveRight(float Value) {
 }
 
 void APlayerBase::ProcessMovementInput() {
-	auto input = ConsumeMovementInputVector();
-	auto up = GetActorUpVector();
-	auto horInput = input - up * (input | up);
 
-	auto direction = horInput.GetSafeNormal();
-	if (direction != FVector::ZeroVector) {
-		
-		if (TurnToDirection(direction, up)) {
+	MeshComponent->AddForce(10000 * ConsumeMovementInputVector() * MeshComponent->GetMass());
 
-			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_F_R"));
-			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_M_R"));
-			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_B_R"));
+	//auto input = ConsumeMovementInputVector();
+	//auto up = GetActorUpVector();
+	//auto horInput = input - up * (input | up);
 
-			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_F_L"));
-			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_M_L"));
-			MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_B_L"));
+	//auto direction = horInput.GetSafeNormal();
+	//if (direction != FVector::ZeroVector) {
+	//	
+	//	if (TurnToDirection(direction, up)) {
 
-		}
+	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_F_R"));
+	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_M_R"));
+	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_B_R"));
 
-	}
+	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_F_L"));
+	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_M_L"));
+	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_B_L"));
+
+	//	}
+
+	//}
 }
 
 void APlayerBase::TurnAtRate(float Rate) {
