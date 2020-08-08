@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Interfaces/PhysActor.h"
 #include "CharacterBase.generated.h"
 
 class UCapsuleComponent;
@@ -9,7 +10,7 @@ class USkeletalMeshComponent;
 class UPawnMovementComponent_Base;
 
 UCLASS(Blueprintable)
-class ACharacterBase : public APawn {
+class ACharacterBase : public APawn, public IPhysActor {
 
 	GENERATED_BODY()
 
@@ -24,21 +25,15 @@ protected:
 
 public:
 
-	FORCEINLINE USkeletalMeshComponent* GetMeshComponent() const { return MeshComponent; }
-
-public:
-
 	void BeginPlay() override;
 
 	void EndPlay(EEndPlayReason::Type EndPlayReason) override;
+
+	virtual UPrimitiveComponent* GetPrimitiveComponent() const override { return MeshComponent; }
 
 public:
 
 	virtual FVector ConsumeMovementInputVector() override;
 
 	virtual void AddMovementInput(FVector WorldDirection, float ScaleValue = 1.0f, bool bForce = false) override;
-
-public:
-
-	static TArray<ACharacterBase*> AllInstances;
 };

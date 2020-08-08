@@ -3,12 +3,8 @@
 
 #include "CharacterBase.h"
 #include "Engine/CollisionProfile.h"
-
 #include "Components/SkeletalMeshComponent.h"
-
 #include "Utils/LogManager.h"
-
-TArray<ACharacterBase*> ACharacterBase::AllInstances;
 
 ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer) {
 	struct FConstructorStatics {
@@ -38,11 +34,11 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 
 void ACharacterBase::BeginPlay() {
 	Super::BeginPlay();
-	AllInstances.Add(this);
+	IPhysActor::AddInstance(this);
 }
 
 void ACharacterBase::EndPlay(EEndPlayReason::Type EndPlayReason) {
-	AllInstances.Remove(this);
+	IPhysActor::RemoveInstance(this);
 	Super::EndPlay(EndPlayReason);
 }
 

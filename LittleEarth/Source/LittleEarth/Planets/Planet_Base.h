@@ -20,5 +20,5 @@ public:
 
 protected:
 
-	virtual void Tick_Internal(float DeltaSeconds) {}
+	virtual void Tick_Internal(float DeltaSeconds);
 };
