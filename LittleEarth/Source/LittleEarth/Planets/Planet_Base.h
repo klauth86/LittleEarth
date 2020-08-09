@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Dicts/PlanetState.h"
+#include "PlanetContext.h"
 #include "Planet_Base.generated.h"
 
 class IPhysActor;
@@ -25,4 +26,7 @@ protected:
 	virtual void Tick_Internal(float DeltaSeconds);
 
 	virtual void AddPhysForceToPhysActor_Internal(float DeltaSeconds, IPhysActor* physActor) {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ShowOnlyInnerProperties))
+	FPlanetContext PlanetContext;
 };

@@ -17,13 +17,8 @@
 #include "Utils/LogManager.h"
 
 APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer) {
-	
-	// set our turn rates for input
-	BaseTurnRate = 45.f;
-	BaseLookUpRate = 45.f;
 
-	MovementPower = 1000;
-	TurnArm = 1;
+	MovementPower = 2000;
 
 	// Don't rotate when the controller rotates.
 	bUseControllerRotationPitch = false;
@@ -34,7 +29,11 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 	CameraBoom = CreateDefaultSubobject<ULE_SpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	
+	CameraBoom->bUsePawnControlRotation = false; // Rotate the arm based on the controller
+	CameraBoom->bInheritPitch = false;
+	CameraBoom->bInheritRoll = false;
+	CameraBoom->bInheritYaw = false;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, ULE_SpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
@@ -60,14 +59,6 @@ void APlayerBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MoveRight);
-
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
-	PlayerInputComponent->BindAxis("TurnRate", this, &APlayerBase::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("LookUpRate", this, &APlayerBase::LookUpAtRate);
 }
 
 void APlayerBase::MoveForward(float Value) {
@@ -97,39 +88,34 @@ void APlayerBase::MoveRight(float Value) {
 
 void APlayerBase::ProcessMovementInput() {
 
-	MeshComponent->AddForce(10000 * ConsumeMovementInputVector() * MeshComponent->GetMass());
+	auto input = ConsumeMovementInputVector();
+	auto up = GetActorUpVector();
+	auto horInput = input - up * (input | up);
 
-	//auto input = ConsumeMovementInputVector();
-	//auto up = GetActorUpVector();
-	//auto horInput = input - up * (input | up);
+	auto direction = horInput.GetSafeNormal();
+	if (direction != FVector::ZeroVector) {
+		
+		if (TurnToDirection(direction, up)) {
+			MeshComponent->AddForce(MovementPower * MeshComponent->GetMass() * input);
 
-	//auto direction = horInput.GetSafeNormal();
-	//if (direction != FVector::ZeroVector) {
-	//	
-	//	if (TurnToDirection(direction, up)) {
+			auto movementPower = MovementPower * MeshComponent->GetMass() / 6;
+			auto movementVector = movementPower * input;
 
-	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_F_R"));
-	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_M_R"));
-	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_B_R"));
+			MeshComponent->AddForce(movementVector, FName("Wheel_F_R"));
+			MeshComponent->AddForce(movementVector, FName("Wheel_M_R"));
+			MeshComponent->AddForce(movementVector, FName("Wheel_B_R"));
 
-	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_F_L"));
-	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_M_L"));
-	//		MeshComponent->AddForce(MovementPower * direction / 6, FName("Wheel_B_L"));
+			MeshComponent->AddForce(movementVector, FName("Wheel_F_L"));
+			MeshComponent->AddForce(movementVector, FName("Wheel_M_L"));
+			MeshComponent->AddForce(movementVector, FName("Wheel_B_L"));
 
-	//	}
+		}
 
-	//}
-}
-
-void APlayerBase::TurnAtRate(float Rate) {
-	//AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
-}
-
-void APlayerBase::LookUpAtRate(float Rate) {
-	//AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	}
 }
 
 bool APlayerBase::TurnToDirection(FVector direction, FVector up) {
+
 	auto forward = GetActorForwardVector();
 	auto rotationVector = FVector::CrossProduct(forward, direction);
 	auto ratio = (rotationVector | up);
@@ -137,13 +123,19 @@ bool APlayerBase::TurnToDirection(FVector direction, FVector up) {
 	if (ratio < THRESH_SPLIT_POLY_PRECISELY)
 		return true;
 
-	MeshComponent->AddForce(ratio * MovementPower * forward / 6, FName("Wheel_F_R"));
-	MeshComponent->AddForce(ratio * MovementPower * forward / 6, FName("Wheel_M_R"));
-	MeshComponent->AddForce(ratio * MovementPower * forward / 6, FName("Wheel_B_R"));
+	if (ratio < 0.25f) // Min rotation power
+		ratio = 0.25f;
 
-	MeshComponent->AddForce(-ratio * MovementPower * forward / 6, FName("Wheel_F_L"));
-	MeshComponent->AddForce(-ratio * MovementPower * forward / 6, FName("Wheel_M_L"));
-	MeshComponent->AddForce(-ratio * MovementPower * forward / 6, FName("Wheel_B_L"));
+	auto movementPower = ratio * MovementPower * MeshComponent->GetMass() / 6;
+	auto movementVector = movementPower * forward;
+
+	MeshComponent->AddForce(movementVector, FName("Wheel_F_R"));
+	MeshComponent->AddForce(movementVector, FName("Wheel_M_R"));
+	MeshComponent->AddForce(movementVector, FName("Wheel_B_R"));
+
+	MeshComponent->AddForce(-movementVector, FName("Wheel_F_L"));
+	MeshComponent->AddForce(-movementVector, FName("Wheel_M_L"));
+	MeshComponent->AddForce(-movementVector, FName("Wheel_B_L"));
 
 	return false;
 }

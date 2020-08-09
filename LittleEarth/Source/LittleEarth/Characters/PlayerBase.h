@@ -15,17 +15,8 @@ public:
 
 	APlayerBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-		float BaseTurnRate;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
-		float BaseLookUpRate;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MovementEngine)
 		float MovementPower;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MovementEngine)
-		float TurnArm;
 
 protected:
 
@@ -65,10 +56,6 @@ protected:
 	void MoveRight(float Value);
 
 	void ProcessMovementInput();
-
-	void TurnAtRate(float Rate);
-
-	void LookUpAtRate(float Rate);
 
 	bool TurnToDirection(FVector direction, FVector up);
 

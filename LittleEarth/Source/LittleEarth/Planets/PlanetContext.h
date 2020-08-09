@@ -11,4 +11,7 @@ struct FPlanetContext {
 	UPROPERTY(EditAnywhere, Category = "Planet Context", BlueprintReadWrite)
 		float TimeToCollapse;
 
+	UPROPERTY(EditAnywhere, Category = "Planet Context", BlueprintReadWrite)
+		float PlanetG;
+
 };

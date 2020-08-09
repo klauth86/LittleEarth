@@ -3,6 +3,7 @@
 
 #include "Planet_WithStates.h"
 #include "Interfaces/PhysActor.h"
+#include "LE_Common.h"
 #include "Components/PrimitiveComponent.h"
 
 void APlanet_WithStates::Tick_Internal(float DeltaSeconds) {
@@ -42,7 +43,13 @@ void APlanet_WithStates::AddPhysForceToPhysActor_Internal(float DeltaSeconds, IP
 }
 
 void APlanet_WithStates::AddPhysForceToPhysActor_Internal_Stable(float DeltaSeconds, IPhysActor* physActor) {
-	physActor->GetPrimitiveComponent()->AddRadialForce(GetActorLocation(), 1000000, -1000000, ERadialImpulseFalloff::RIF_MAX);
+	auto primitiveComponent = physActor->GetPrimitiveComponent();
+	auto mass = primitiveComponent->GetMass();
+	physActor->GetPrimitiveComponent()->AddRadialForce(
+		GetActorLocation(),
+		LE_Common::PLANET_RADIAL_FIELD_MAX_RADIUS,
+		-mass * LE_Common::EARTH_G * PlanetContext.PlanetG,
+		ERadialImpulseFalloff::RIF_MAX);
 }
 
 void APlanet_WithStates::AddPhysForceToPhysActor_Internal_Collapsing(float DeltaSeconds, IPhysActor* physActor) {
