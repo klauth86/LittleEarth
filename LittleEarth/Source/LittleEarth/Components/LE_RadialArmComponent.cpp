@@ -29,30 +29,33 @@ void ULE_RadialArmComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 
 void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float DeltaTime) {
 	
-	auto owner = GetOwner();
-	auto ownerLocation = owner->GetActorLocation();
+	if (auto owner = GetOwner()) {
+		
+		auto ownerLocation = owner->GetActorLocation();
 
-	const FVector PreviousSocketLocation = SocketLocation;
+		const FVector PreviousSocketLocation = SocketLocation;
 
-	FVector DesiredSocketLoc;
-	if (Center) {
-		auto direction = (ownerLocation - Center->GetActorLocation()).GetSafeNormal();
-		DesiredSocketLoc = ownerLocation + direction * TargetArmLength;
+		FVector DesiredSocketLoc;
+		if (Center) {
+			auto direction = (ownerLocation - Center->GetActorLocation()).GetSafeNormal();
+			DesiredSocketLoc = ownerLocation + direction * TargetArmLength;
+
+		}
+		else {
+			auto direction = owner->GetActorUpVector();
+			DesiredSocketLoc = ownerLocation + direction * TargetArmLength;
+		}
+
+		if (enableCameraLag) {
+			SocketLocation = FMath::VInterpTo(PreviousSocketLocation, DesiredSocketLoc, DeltaTime, CameraLagSpeed);
+		}
+		else {
+			SocketLocation = DesiredSocketLoc;
+		}
+
+		SocketRotation = (ownerLocation - SocketLocation).ToOrientationQuat();
 
 	}
-	else {
-		auto direction =owner->GetActorUpVector();
-		DesiredSocketLoc = ownerLocation + direction * TargetArmLength;
-	}
-
-	if (enableCameraLag) {
-		SocketLocation = FMath::VInterpTo(PreviousSocketLocation, DesiredSocketLoc, DeltaTime, CameraLagSpeed);
-	}
-	else {
-		SocketLocation = DesiredSocketLoc;
-	}
-
-	SocketRotation = (ownerLocation - SocketLocation).ToOrientationQuat();
 }
 
 FTransform ULE_RadialArmComponent::GetSocketTransform(FName InSocketName, ERelativeTransformSpace TransformSpace) const {

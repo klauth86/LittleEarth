@@ -21,14 +21,14 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class ULE_SpringArmComponent* CameraBoom;
+		class ULE_RadialArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		class UCameraComponent* FollowCamera;
 
 public:
 
-	FORCEINLINE class ULE_SpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE class ULE_RadialArmComponent* GetCameraBoom() const { return CameraBoom; }
 
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 

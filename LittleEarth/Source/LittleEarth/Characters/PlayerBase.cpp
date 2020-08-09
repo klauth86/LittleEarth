@@ -2,7 +2,7 @@
 
 #include "PlayerBase.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/LE_SpringArmComponent.h"
+#include "Components/LE_RadialArmComponent.h"
 #include "Camera/CameraComponent.h"
 
 #include "GameFramework/Controller.h"
@@ -26,19 +26,45 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 	bUseControllerRotationRoll = false;
 
 	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = CreateDefaultSubobject<ULE_SpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom = CreateDefaultSubobject<ULE_RadialArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	
-	CameraBoom->bUsePawnControlRotation = false; // Rotate the arm based on the controller
-	CameraBoom->bInheritPitch = false;
-	CameraBoom->bInheritRoll = false;
-	CameraBoom->bInheritYaw = false;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, ULE_SpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
+	FollowCamera->SetupAttachment(CameraBoom, ULE_RadialArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 }
+
+
+
+static ALE_HUD* hud = nullptr;
+
+void APlayerBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) {
+	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::Jump);
+	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::StopJumping);
+
+	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MoveRight);
+
+	auto controller = GetController<APlayerController>();
+	hud = Cast<ALE_HUD>(controller->GetHUD());
+	if (hud) {
+		hud->Init();
+	}
+}
+
+void APlayerBase::BeginPlay() {
+	Super::BeginPlay();
+}
+
+void APlayerBase::EndPlay(EEndPlayReason::Type EndPlayReason) {
+	if (hud) {
+		hud->UnInit();
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
+
 
 void APlayerBase::StartJumpInput(bool primaryInput) {
 	if (primaryInput) {
@@ -51,14 +77,6 @@ void APlayerBase::EndJumpInput(bool primaryInput) {
 	if (primaryInput) {
 		//bPrimaryJumpInput = false;
 	}
-}
-
-void APlayerBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) {
-	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::Jump);
-	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::StopJumping);
-
-	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MoveRight);
 }
 
 void APlayerBase::MoveForward(float Value) {
@@ -140,25 +158,7 @@ bool APlayerBase::TurnToDirection(FVector direction, FVector up) {
 	return false;
 }
 
-static ALE_HUD* hud = nullptr;
 
-void APlayerBase::BeginPlay() {
-	Super::BeginPlay();
-
-	auto controller = GetController<APlayerController>();
-	hud = Cast<ALE_HUD>(controller->GetHUD());
-	if (hud) {
-		hud->Init();
-	}
-}
-
-void APlayerBase::EndPlay(EEndPlayReason::Type EndPlayReason) {	
-	if (hud) {
-		hud->UnInit();
-	}
-
-	Super::EndPlay(EndPlayReason);
-}
 
 void APlayerBase::NotifyActorBeginOverlap(AActor* OtherActor) {
 	Super::NotifyActorBeginOverlap(OtherActor);
