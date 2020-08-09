@@ -2,6 +2,7 @@
 
 
 #include "LE_RadialArmComponent.h"
+#include "GameFramework/Actor.h"
 
 const FName ULE_RadialArmComponent::SocketName(TEXT("RadialEndpoint"));
 
@@ -27,9 +28,22 @@ void ULE_RadialArmComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 }
 
 void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float DeltaTime) {
+	
+	auto owner = GetOwner();
+	auto ownerLocation = owner->GetActorLocation();
+
 	const FVector PreviousSocketLocation = SocketLocation;
 
 	FVector DesiredSocketLoc;
+	if (Center) {
+		auto direction = (ownerLocation - Center->GetActorLocation()).GetSafeNormal();
+		DesiredSocketLoc = ownerLocation + direction * TargetArmLength;
+
+	}
+	else {
+		auto direction =owner->GetActorUpVector();
+		DesiredSocketLoc = ownerLocation + direction * TargetArmLength;
+	}
 
 	if (enableCameraLag) {
 		SocketLocation = FMath::VInterpTo(PreviousSocketLocation, DesiredSocketLoc, DeltaTime, CameraLagSpeed);
@@ -37,6 +51,8 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 	else {
 		SocketLocation = DesiredSocketLoc;
 	}
+
+	SocketRotation = (ownerLocation - SocketLocation).ToOrientationQuat();
 }
 
 FTransform ULE_RadialArmComponent::GetSocketTransform(FName InSocketName, ERelativeTransformSpace TransformSpace) const {
