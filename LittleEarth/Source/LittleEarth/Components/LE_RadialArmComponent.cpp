@@ -3,6 +3,7 @@
 
 #include "LE_RadialArmComponent.h"
 #include "GameFramework/Actor.h"
+#include "DrawDebugHelpers.h"
 
 const FName ULE_RadialArmComponent::SocketName(TEXT("RadialEndpoint"));
 
@@ -13,7 +14,6 @@ ULE_RadialArmComponent::ULE_RadialArmComponent() {
 	bAutoActivate = true;
 	bTickInEditor = true;
 
-	TargetArmLength = 300.0f;
 	CameraLagSpeed = 10.f;
 }
 
@@ -32,19 +32,24 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 	if (auto owner = GetOwner()) {
 		
 		auto ownerLocation = owner->GetActorLocation();
+		auto ownerRotation = owner->GetActorRotation();		
 
 		const FVector PreviousSocketLocation = SocketLocation;
 
-		FVector DesiredSocketLoc;
-		if (Center) {
-			auto direction = (ownerLocation - Center->GetActorLocation()).GetSafeNormal();
-			DesiredSocketLoc = ownerLocation + direction * TargetArmLength;
+		auto size2D = ownerLocation.Z * ownerLocation.Z + ownerLocation.Y * ownerLocation.Y;
+		auto size = ownerLocation.Size();
 
-		}
-		else {
-			auto direction = owner->GetActorUpVector();
-			DesiredSocketLoc = ownerLocation + direction * TargetArmLength;
-		}
+		auto cosAlpha = size2D ? ownerLocation.Y / size2D : 1;
+		auto sinAlpha = size2D ? ownerLocation.Z / size2D : 0;
+		auto cosTheta = ownerLocation.X / size;
+		auto sinTheta = FMath::Sqrt(1 - cosTheta * cosTheta);
+
+		FVector DesiredSocketLoc = ownerLocation +
+			FVector(
+				cosTheta * Offset.Y - sinTheta * Offset.Z,
+				sinTheta * cosAlpha * Offset.Y + cosTheta * cosAlpha * Offset.Z - sinTheta * sinAlpha * Offset.X,
+				sinTheta* sinAlpha * Offset.Y + cosTheta * sinAlpha * Offset.Z + sinTheta * cosAlpha * Offset.X
+				);
 
 		if (enableCameraLag) {
 			SocketLocation = FMath::VInterpTo(PreviousSocketLocation, DesiredSocketLoc, DeltaTime, CameraLagSpeed);
@@ -54,33 +59,11 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 		}
 
 		SocketRotation = (ownerLocation - SocketLocation).ToOrientationQuat();
-
 	}
 }
 
 FTransform ULE_RadialArmComponent::GetSocketTransform(FName InSocketName, ERelativeTransformSpace TransformSpace) const {
-	FTransform RelativeTransform(SocketRotation, SocketLocation);
-
-	switch (TransformSpace) {
-	case RTS_World:
-	{
-		return RelativeTransform * GetComponentTransform();
-		break;
-	}
-	case RTS_Actor:
-	{
-		if (const AActor* Actor = GetOwner()) {
-			FTransform SocketTransform = RelativeTransform * GetComponentTransform();
-			return SocketTransform.GetRelativeTransform(Actor->GetTransform());
-		}
-		break;
-	}
-	case RTS_Component:
-	{
-		return RelativeTransform;
-	}
-	}
-	return RelativeTransform;
+	return FTransform(SocketRotation, SocketLocation);
 }
 
 bool ULE_RadialArmComponent::HasAnySockets() const {
