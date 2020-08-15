@@ -30,9 +30,9 @@ void ULE_RadialArmComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float DeltaTime) {
 	
 	if (auto owner = GetOwner()) {
-		
+
 		auto ownerLocation = owner->GetActorLocation();
-		auto ownerRotation = owner->GetActorRotation();		
+		auto ownerRotation = owner->GetActorRotation();
 
 		const FVector PreviousSocketLocation = SocketLocation;
 
@@ -41,15 +41,30 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 
 		auto cosGamma = size2D ? ownerLocation.Z / size2D : 1;
 		auto sinGamma = size2D ? ownerLocation.Y / size2D : 0;
-		auto cosBetta = size ? ownerLocation.X / size : 1;
-		auto sinBetta = size ? FMath::Sqrt(1 - cosBetta * cosBetta) : 0; // TODO Check sign
 
-		FVector DesiredSocketLoc = ownerLocation +
-			FVector(
-				sinBetta * Offset.X + cosBetta * Offset.Y,
-				cosBetta * sinGamma * Offset.X - sinBetta * sinGamma * Offset.Y - cosGamma * Offset.Z,
-				cosBetta * cosGamma * Offset.X - sinBetta * cosGamma * Offset.Y - sinGamma * Offset.Z
-				);
+		auto delta = bCalculateBettaAngle ? (BettaAngleArcLength / size) : BettaAngleInDegrees * PI / 180;
+		auto cosDelta = FMath::Cos(delta);
+		auto sinDelta = FMath::Sin(delta);
+
+		// From coordinates equations
+		//	x = r * sin(b)
+		//	y = r * cos(b) * sin(g)
+		//	z = r * cos(b) * cos(g)
+		auto size_sinGamma = size * sinGamma;
+
+		auto sinBetta = size_sinGamma ? ownerLocation.X / size : 0;
+		auto cosBetta = size_sinGamma ? ownerLocation.Y / size_sinGamma : 1;
+
+		auto cosCamera = cosBetta * cosDelta - sinBetta * sinDelta;
+		auto sinCamera = sinBetta * cosDelta - sinDelta * cosBetta;
+
+		auto height = size + HeightOffset;
+
+		FVector DesiredSocketLoc = FVector(
+				sinCamera *height,
+				cosBetta * sinGamma * height,
+				cosBetta * cosGamma * height
+			);
 
 		if (enableCameraLag) {
 			SocketLocation = FMath::VInterpTo(PreviousSocketLocation, DesiredSocketLoc, DeltaTime, CameraLagSpeed);

@@ -23,7 +23,16 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
-		FVector Offset = FVector::ZeroVector;
+		float HeightOffset = 300.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
+		float BettaAngleInDegrees = 30.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
+		uint32 bCalculateBettaAngle : 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
+		float BettaAngleArcLength = 600.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
 		uint32 bEnableCameraLag : 1;
