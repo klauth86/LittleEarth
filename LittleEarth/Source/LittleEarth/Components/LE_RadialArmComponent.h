@@ -42,12 +42,21 @@ protected:
 
 	FVector SocketLocation = FVector::ZeroVector;
 	FQuat SocketRotation;
+	
+	void UpdateSocketTransform(bool enableCameraLag, float DeltaTime);
+
+	bool CalculateBettaAngle(float radius, float arcLength, float& outValue) const;
 
 	// USceneComponent interface
-	virtual bool HasAnySockets() const override;
-	virtual FTransform GetSocketTransform(FName InSocketName, ERelativeTransformSpace TransformSpace = RTS_World) const override;
-	virtual void QuerySupportedSockets(TArray<FComponentSocketDescription>& OutSockets) const override;
-	// End of USceneComponent interface
 
-	void UpdateSocketTransform(bool enableCameraLag, float DeltaTime);
+	virtual bool HasAnySockets() const override { return true; }
+
+	virtual FTransform GetSocketTransform(FName InSocketName, ERelativeTransformSpace TransformSpace = RTS_World) const override { 
+		return FTransform(SocketRotation, SocketLocation); }
+
+	virtual void QuerySupportedSockets(TArray<FComponentSocketDescription>& OutSockets) const override {
+		new (OutSockets) FComponentSocketDescription(SocketName, EComponentSocketType::Socket);
+	}
+
+	// End of USceneComponent interface
 };

@@ -31,7 +31,9 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 	
 	if (auto owner = GetOwner()) {
 
-		auto ownerLocation = owner->GetActorLocation();
+		auto ownerLocation = FVector::ZeroVector;
+		
+		owner->GetActorLocation();
 		auto ownerRotation = owner->GetActorRotation();
 
 		const FVector PreviousSocketLocation = SocketLocation;
@@ -42,7 +44,11 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 		auto cosGamma = size2D ? ownerLocation.Z / size2D : 1;
 		auto sinGamma = size2D ? ownerLocation.Y / size2D : 0;
 
-		auto delta = bCalculateBettaAngle ? (BettaAngleArcLength / size) : BettaAngleInDegrees * PI / 180;
+		auto delta = BettaAngleInDegrees * PI / 180;
+		if (bCalculateBettaAngle) {
+			CalculateBettaAngle(size, BettaAngleArcLength, delta); // TODO MAYBE INDICATEIF NOT SUCCEED
+		}
+
 		auto cosDelta = FMath::Cos(delta);
 		auto sinDelta = FMath::Sin(delta);
 
@@ -77,15 +83,11 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 	}
 }
 
-FTransform ULE_RadialArmComponent::GetSocketTransform(FName InSocketName, ERelativeTransformSpace TransformSpace) const {
-	return FTransform(SocketRotation, SocketLocation);
-}
+bool ULE_RadialArmComponent::CalculateBettaAngle(float radius, float arcLength, float& outValue) const {
+	if (radius) {
+		outValue = arcLength / radius;
+		return true;
+	}
 
-bool ULE_RadialArmComponent::HasAnySockets() const {
-	return true;
+	return false;
 }
-
-void ULE_RadialArmComponent::QuerySupportedSockets(TArray<FComponentSocketDescription>& OutSockets) const {
-	new (OutSockets) FComponentSocketDescription(SocketName, EComponentSocketType::Socket);
-}
-
