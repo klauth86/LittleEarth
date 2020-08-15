@@ -36,19 +36,19 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 
 		const FVector PreviousSocketLocation = SocketLocation;
 
-		auto size2D = ownerLocation.Z * ownerLocation.Z + ownerLocation.Y * ownerLocation.Y;
+		auto size2D = FMath::Sqrt(ownerLocation.Z * ownerLocation.Z + ownerLocation.Y * ownerLocation.Y);
 		auto size = ownerLocation.Size();
 
-		auto cosAlpha = size2D ? ownerLocation.Y / size2D : 1;
-		auto sinAlpha = size2D ? ownerLocation.Z / size2D : 0;
-		auto cosTheta = ownerLocation.X / size;
-		auto sinTheta = FMath::Sqrt(1 - cosTheta * cosTheta);
+		auto cosGamma = size2D ? ownerLocation.Z / size2D : 1;
+		auto sinGamma = size2D ? ownerLocation.Y / size2D : 0;
+		auto cosBetta = size ? ownerLocation.X / size : 1;
+		auto sinBetta = size ? FMath::Sqrt(1 - cosBetta * cosBetta) : 0; // TODO Check sign
 
 		FVector DesiredSocketLoc = ownerLocation +
 			FVector(
-				cosTheta * Offset.Y - sinTheta * Offset.Z,
-				sinTheta * cosAlpha * Offset.Y + cosTheta * cosAlpha * Offset.Z - sinTheta * sinAlpha * Offset.X,
-				sinTheta* sinAlpha * Offset.Y + cosTheta * sinAlpha * Offset.Z + sinTheta * cosAlpha * Offset.X
+				sinBetta * Offset.X + cosBetta * Offset.Y,
+				cosBetta * sinGamma * Offset.X - sinBetta * sinGamma * Offset.Y - cosGamma * Offset.Z,
+				cosBetta * cosGamma * Offset.X - sinBetta * cosGamma * Offset.Y - sinGamma * Offset.Z
 				);
 
 		if (enableCameraLag) {
