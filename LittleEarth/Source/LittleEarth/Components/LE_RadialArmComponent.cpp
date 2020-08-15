@@ -31,9 +31,7 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 	
 	if (auto owner = GetOwner()) {
 
-		auto ownerLocation = FVector::ZeroVector;
-		
-		owner->GetActorLocation();
+		auto ownerLocation = owner->GetActorLocation();
 		auto ownerRotation = owner->GetActorRotation();
 
 		const FVector PreviousSocketLocation = SocketLocation;
