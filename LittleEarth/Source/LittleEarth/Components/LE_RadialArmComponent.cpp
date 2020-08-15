@@ -3,6 +3,7 @@
 
 #include "LE_RadialArmComponent.h"
 #include "GameFramework/Actor.h"
+#include "Utils/LogManager.h"
 #include "DrawDebugHelpers.h"
 
 const FName ULE_RadialArmComponent::SocketName(TEXT("RadialEndpoint"));
@@ -65,10 +66,13 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 		auto height = size + HeightOffset;
 
 		FVector DesiredSocketLoc = FVector(
-				sinCamera *height,
-				cosBetta * sinGamma * height,
-				cosBetta * cosGamma * height
+			sinBetta * height,
+			cosBetta * sinGamma * height,
+			cosBetta * cosGamma * height
 			);
+
+		DrawDebugLine(GetWorld(), ownerLocation, PreviousSocketLocation, FColor::Red, false, 0, 0, 2.f);
+		LogManager::LogWarning(TEXT("______ loc[%s] sin_betta[%f]"), *PreviousSocketLocation.ToString(), sinBetta);
 
 		if (enableCameraLag) {
 			SocketLocation = FMath::VInterpTo(PreviousSocketLocation, DesiredSocketLoc, DeltaTime, CameraLagSpeed);
