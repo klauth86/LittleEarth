@@ -78,8 +78,6 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 				cosBetta * sinGamma * height,
 				cosBetta * cosGamma * height), FColor::Blue, false, 0, 0, 2.f);
 
-		LogManager::LogWarning(TEXT("______ loc[%s] sin_betta[%f]"), *PreviousSocketLocation.ToString(), sinBetta);
-
 		if (enableCameraLag) {
 			SocketLocation = FMath::VInterpTo(PreviousSocketLocation, DesiredSocketLoc, DeltaTime, CameraLagSpeed);
 		}
@@ -87,7 +85,9 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 			SocketLocation = DesiredSocketLoc;
 		}
 
-		SocketRotation = (ownerLocation - SocketLocation).ToOrientationQuat();
+		SocketRotation = (ownerLocation - SocketLocation).Rotation();
+		auto rawGamma = FMath::Acos(cosGamma) * 180 / PI;
+		SocketRotation.Roll = rawGamma * FMath::Sign(ownerLocation.Y);
 	}
 }
 

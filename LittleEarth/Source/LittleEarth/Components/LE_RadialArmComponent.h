@@ -41,7 +41,7 @@ protected:
 		float CameraLagSpeed;
 
 	FVector SocketLocation = FVector::ZeroVector;
-	FQuat SocketRotation;
+	FRotator SocketRotation;
 	
 	void UpdateSocketTransform(bool enableCameraLag, float DeltaTime);
 
