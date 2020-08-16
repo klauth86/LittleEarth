@@ -60,18 +60,24 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 		auto sinBetta = size_sinGamma ? ownerLocation.X / size : 0;
 		auto cosBetta = size_sinGamma ? ownerLocation.Y / size_sinGamma : 1;
 
-		auto cosCamera = cosBetta * cosDelta - sinBetta * sinDelta;
+		auto cosCamera = cosBetta * cosDelta + sinBetta * sinDelta;
 		auto sinCamera = sinBetta * cosDelta - sinDelta * cosBetta;
 
 		auto height = size + HeightOffset;
 
 		FVector DesiredSocketLoc = FVector(
-			sinBetta * height,
-			cosBetta * sinGamma * height,
-			cosBetta * cosGamma * height
+			sinCamera * height,
+			cosCamera * sinGamma * height,
+			cosCamera * cosGamma * height
 			);
 
 		DrawDebugLine(GetWorld(), ownerLocation, PreviousSocketLocation, FColor::Red, false, 0, 0, 2.f);
+		DrawDebugLine(GetWorld(), ownerLocation, 
+			FVector(
+				sinBetta * height,
+				cosBetta * sinGamma * height,
+				cosBetta * cosGamma * height), FColor::Blue, false, 0, 0, 2.f);
+
 		LogManager::LogWarning(TEXT("______ loc[%s] sin_betta[%f]"), *PreviousSocketLocation.ToString(), sinBetta);
 
 		if (enableCameraLag) {
