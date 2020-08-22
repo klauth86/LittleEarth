@@ -92,13 +92,25 @@ void APlayerBase::MoveRight(float Value) {
 	}
 }
 
-void APlayerBase::ProcessMovementInput() {
+const auto rightWheels = TArray<FName>({ FName("Wheel_F_R") , FName("Wheel_M_R") , FName("Wheel_B_R") });
+const auto leftWheels = TArray<FName>({ FName("Wheel_F_L") , FName("Wheel_M_L") , FName("Wheel_B_L") });
 
+const int angularVelocityMultiplier = 4;
+
+void APlayerBase::ProcessMovementInput() {
 	auto input = ConsumeMovementInputVector();
 	auto up = GetActorUpVector();
 	auto horInput = input - up * (input | up);
 
 	auto direction = horInput.GetSafeNormal();
+
+	if (IsBraking) {
+		Brake();
+		direction /= angularVelocityMultiplier;
+	}
+
+
+
 	if (direction != FVector::ZeroVector) {
 
 		auto forward = GetActorForwardVector();
@@ -111,9 +123,6 @@ void APlayerBase::ProcessMovementInput() {
 		MoveToDirection(moveRatio);
 	}
 }
-
-const auto rightWheels = TArray<FName>({ FName("Wheel_F_R") , FName("Wheel_M_R") , FName("Wheel_B_R") });
-const auto leftWheels = TArray<FName>({ FName("Wheel_F_L") , FName("Wheel_M_L") , FName("Wheel_B_L") });
 
 bool APlayerBase::TurnToDirection(float turnRatio) {
 
@@ -163,13 +172,19 @@ void APlayerBase::MoveToDirection(float moveRatio) {
 	}
 }
 
-void APlayerBase::AddOrRemoveBrakingInertia(bool add) {
-	
-	const int inertiaMultiplier = 16;
+void APlayerBase::Brake() {
 
 	for (auto body : MeshComponent->Bodies) {
-		body->InertiaTensorScale = add ? FVector::OneVector * inertiaMultiplier : FVector::OneVector;
+
+		if (rightWheels.Contains(body->BodySetup->BoneName) || leftWheels.Contains(body->BodySetup->BoneName)) {
+			auto oldVelocity = body->GetUnrealWorldAngularVelocityInRadians();
+			body->SetAngularVelocityInRadians(oldVelocity / angularVelocityMultiplier, false);
+		}
 	}
+}
+
+void APlayerBase::AddOrRemoveBrakingInertia(bool add) {
+	if (add) Brake();
 }
 
 void APlayerBase::NotifyActorBeginOverlap(AActor* OtherActor) {

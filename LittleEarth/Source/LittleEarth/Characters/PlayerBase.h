@@ -67,6 +67,8 @@ protected:
 
 	void MoveToDirection(float moveRatio);
 
+	void Brake();
+
 	void AddOrRemoveBrakingInertia(bool add);
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
