@@ -19,7 +19,7 @@
 
 APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer) {
 
-	MovementPower = 2000;
+	MovementPower = 1;
 
 	// Don't rotate when the controller rotates.
 	bUseControllerRotationPitch = false;
@@ -121,7 +121,7 @@ bool APlayerBase::TurnToDirection(float turnRatio) {
 	if (ratioAbs < 0.25f) // Min rotation power
 		turnRatio = 0.25f * FMath::Sign(turnRatio);
 
-	auto angularImpulseDirPerWheel = turnRatio * GetActorRightVector();
+	auto angularImpulseDirPerWheel = MovementPower * turnRatio * GetActorRightVector();
 
 	for (auto body : MeshComponent->Bodies) {
 		auto mass = body->GetBodyMass();
@@ -144,7 +144,7 @@ void APlayerBase::MoveToDirection(float moveRatio) {
 	if (ratioAbs < THRESH_SPLIT_POLY_PRECISELY)
 		return;
 
-	auto angularImpulseDirPerWheel = moveRatio * GetActorRightVector();
+	auto angularImpulseDirPerWheel = MovementPower * moveRatio * GetActorRightVector();
 
 	for (auto body : MeshComponent->Bodies) {
 		auto mass = body->GetBodyMass();
