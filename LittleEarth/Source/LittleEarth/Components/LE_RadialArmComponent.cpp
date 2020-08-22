@@ -18,7 +18,7 @@ ULE_RadialArmComponent::ULE_RadialArmComponent() {
 
 	CameraLagSpeed = 10.f;
 
-	Offset = FVector(-1200, 0, 600);
+	Offset = FVector(-1200, 0, 800);
 }
 
 void ULE_RadialArmComponent::OnRegister() {
@@ -50,6 +50,6 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 			SocketLocation = DesiredSocketLoc;
 		}
 
-		SocketRotation = FMatrix(forwardVector, FVector::CrossProduct(forwardVector, upVector), upVector, FVector::ZeroVector).Rotator;
+		SocketRotation = FMatrix(forwardVector, FVector::CrossProduct(upVector, forwardVector), upVector, FVector::ZeroVector).Rotator();
 	}
 }
