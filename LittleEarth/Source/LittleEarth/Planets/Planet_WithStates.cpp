@@ -11,7 +11,6 @@ void APlanet_WithStates::Tick_Internal(float DeltaSeconds) {
 
 	switch (PlanetState) {
 	case EPlanetState::STABLE:
-
 		break;
 
 	case EPlanetState::COLLAPSING:

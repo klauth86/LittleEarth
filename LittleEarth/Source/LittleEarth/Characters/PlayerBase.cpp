@@ -11,6 +11,7 @@
 #include "Pickups/Pickup_Base.h"
 
 #include "LE_HUD.h"
+#include "LE_Common.h"
 
 #include "EngineUtils.h"
 #include "Utils/InputBindingsHelper.h"
@@ -120,14 +121,17 @@ bool APlayerBase::TurnToDirection(float turnRatio) {
 	if (ratioAbs < 0.25f) // Min rotation power
 		turnRatio = 0.25f * FMath::Sign(turnRatio);
 
-	auto oneWheelAngularImpulse = turnRatio * GetActorRightVector() * 10000;
+	auto angularImpulseDirPerWheel = turnRatio * GetActorRightVector();
 
-	for (auto body: MeshComponent->Bodies) {
+	for (auto body : MeshComponent->Bodies) {
+		auto mass = body->GetBodyMass();
+		auto weight = mass * LE_Common::EARTH_G;
+
 		if (rightWheels.Contains(body->BodySetup->BoneName)) {
-			body->AddAngularImpulseInRadians(oneWheelAngularImpulse, false);
+			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel * weight, false);
 		}
 		else if (leftWheels.Contains(body->BodySetup->BoneName)) {
-			body->AddAngularImpulseInRadians(-oneWheelAngularImpulse, false);
+			body->AddAngularImpulseInRadians(-angularImpulseDirPerWheel * weight, false);
 		}
 	}
 
@@ -140,14 +144,18 @@ void APlayerBase::MoveToDirection(float moveRatio) {
 	if (ratioAbs < THRESH_SPLIT_POLY_PRECISELY)
 		return;
 
-	auto onWheelAngularImpulse = moveRatio * GetActorRightVector() * 10000;
+	auto angularImpulseDirPerWheel = moveRatio * GetActorRightVector();
 
 	for (auto body : MeshComponent->Bodies) {
+		auto mass = body->GetBodyMass();
+		auto weight = mass * LE_Common::EARTH_G;
+
 		if (rightWheels.Contains(body->BodySetup->BoneName)) {
-			body->AddAngularImpulseInRadians(onWheelAngularImpulse, false);
+			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel, false);
 		}
 		else if (leftWheels.Contains(body->BodySetup->BoneName)) {
-			body->AddAngularImpulseInRadians(onWheelAngularImpulse, false);
+			auto mass = body->GetBodyMass();
+			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel, false);
 		}
 	}
 }
