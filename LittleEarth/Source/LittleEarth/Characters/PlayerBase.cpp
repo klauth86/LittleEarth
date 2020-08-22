@@ -44,6 +44,9 @@ void APlayerBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MoveRight);
 
+	PlayerInputComponent->BindAction("Brake", IE_Pressed, this, &APlayerBase::StartBraking);
+	PlayerInputComponent->BindAction("Brake", IE_Released, this, &APlayerBase::EndBraking);
+
 	if (auto controller = Cast<APlayerController>(Controller)) {
 		hud = Cast<ALE_HUD>(controller->GetHUD());
 		if (hud) { hud->Init(); }
@@ -99,8 +102,8 @@ void APlayerBase::ProcessMovementInput() {
 	if (direction != FVector::ZeroVector) {
 
 		auto forward = GetActorForwardVector();
-		auto rotationVector = FVector::CrossProduct(forward, direction);		
-		
+		auto rotationVector = FVector::CrossProduct(forward, direction);
+
 		auto turnRatio = (rotationVector | up);
 		auto moveRatio = (forward | direction);
 
@@ -157,6 +160,15 @@ void APlayerBase::MoveToDirection(float moveRatio) {
 			auto mass = body->GetBodyMass();
 			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel * weight, false);
 		}
+	}
+}
+
+void APlayerBase::AddOrRemoveBrakingInertia(bool add) {
+	
+	const int inertiaMultiplier = 16;
+
+	for (auto body : MeshComponent->Bodies) {
+		body->InertiaTensorScale = add ? FVector::OneVector * inertiaMultiplier : FVector::OneVector;
 	}
 }
 

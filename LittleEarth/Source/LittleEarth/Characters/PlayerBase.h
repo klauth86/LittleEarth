@@ -29,6 +29,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		UCameraComponent* FollowCamera;
 
+	uint8 IsBraking : 1;
+
 public:
 
 	FORCEINLINE ULE_RadialArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -51,6 +53,10 @@ protected:
 	UFUNCTION()
 	void EndJumpInput(bool primaryInput);
 
+	void StartBraking() { AddOrRemoveBrakingInertia(IsBraking = true); }
+
+	void EndBraking() { AddOrRemoveBrakingInertia(IsBraking = false); }
+
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);
@@ -60,6 +66,8 @@ protected:
 	bool TurnToDirection(float turnRatio);
 
 	void MoveToDirection(float moveRatio);
+
+	void AddOrRemoveBrakingInertia(bool add);
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 };
