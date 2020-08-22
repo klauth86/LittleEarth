@@ -57,7 +57,9 @@ protected:
 
 	void ProcessMovementInput();
 
-	bool TurnToDirection(FVector direction, FVector up);
+	bool TurnToDirection(float turnRatio);
+
+	void MoveToDirection(float moveRatio);
 
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 };

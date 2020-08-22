@@ -10,3 +10,5 @@
 '*.obj' filter=lfs diff=lfs merge=lfs -text
 '*.jpeg' filter=lfs diff=lfs merge=lfs -text
 '*.friz' filter=lfs diff=lfs merge=lfs -text
+'*.uasset' filter=lfs diff=lfs merge=lfs -text
+'*.umap' filter=lfs diff=lfs merge=lfs -text

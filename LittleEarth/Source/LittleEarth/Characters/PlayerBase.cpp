@@ -45,10 +45,9 @@ void APlayerBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APlayerBase::MoveRight);
 
-	auto controller = GetController<APlayerController>();
-	hud = Cast<ALE_HUD>(controller->GetHUD());
-	if (hud) {
-		hud->Init();
+	if (auto controller = Cast<APlayerController>(Controller)) {
+		hud = Cast<ALE_HUD>(controller->GetHUD());
+		if (hud) { hud->Init(); }
 	}
 }
 
@@ -57,14 +56,9 @@ void APlayerBase::BeginPlay() {
 }
 
 void APlayerBase::EndPlay(EEndPlayReason::Type EndPlayReason) {
-	if (hud) {
-		hud->UnInit();
-	}
-
+	if (hud) { hud->UnInit(); }
 	Super::EndPlay(EndPlayReason);
 }
-
-
 
 void APlayerBase::StartJumpInput(bool primaryInput) {
 	if (primaryInput) {
@@ -81,25 +75,14 @@ void APlayerBase::EndJumpInput(bool primaryInput) {
 
 void APlayerBase::MoveForward(float Value) {
 	if ((Controller != NULL) && (Value != 0.0f)) {
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 	}
 }
 
 void APlayerBase::MoveRight(float Value) {
 	if ((Controller != NULL) && (Value != 0.0f)) {
-		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get right vector 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		// add movement in that direction
+		const FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value);
 	}
 }
@@ -112,53 +95,61 @@ void APlayerBase::ProcessMovementInput() {
 
 	auto direction = horInput.GetSafeNormal();
 	if (direction != FVector::ZeroVector) {
+
+		auto forward = GetActorForwardVector();
+		auto rotationVector = FVector::CrossProduct(forward, direction);		
 		
-		if (TurnToDirection(direction, up)) {
-			MeshComponent->AddForce(MovementPower * MeshComponent->GetMass() * input);
+		auto turnRatio = (rotationVector | up);
+		auto moveRatio = (forward | direction);
 
-			auto movementPower = MovementPower * MeshComponent->GetMass() / 6;
-			auto movementVector = movementPower * input;
-
-			MeshComponent->AddForce(movementVector, FName("Wheel_F_R"));
-			MeshComponent->AddForce(movementVector, FName("Wheel_M_R"));
-			MeshComponent->AddForce(movementVector, FName("Wheel_B_R"));
-
-			MeshComponent->AddForce(movementVector, FName("Wheel_F_L"));
-			MeshComponent->AddForce(movementVector, FName("Wheel_M_L"));
-			MeshComponent->AddForce(movementVector, FName("Wheel_B_L"));
-
-		}
-
+		TurnToDirection(turnRatio);
+		MoveToDirection(moveRatio);
 	}
 }
 
-bool APlayerBase::TurnToDirection(FVector direction, FVector up) {
+const auto rightWheels = TArray<FName>({ FName("Wheel_F_R") , FName("Wheel_M_R") , FName("Wheel_B_R") });
+const auto leftWheels = TArray<FName>({ FName("Wheel_F_L") , FName("Wheel_M_L") , FName("Wheel_B_L") });
 
-	auto forward = GetActorForwardVector();
-	auto rotationVector = FVector::CrossProduct(forward, direction);
-	auto ratio = (rotationVector | up);
+bool APlayerBase::TurnToDirection(float turnRatio) {
 
-	if (ratio < THRESH_SPLIT_POLY_PRECISELY)
+	auto ratioAbs = FMath::Abs(turnRatio);
+	if (ratioAbs < THRESH_SPLIT_POLY_PRECISELY)
 		return true;
 
-	if (ratio < 0.25f) // Min rotation power
-		ratio = 0.25f;
+	if (ratioAbs < 0.25f) // Min rotation power
+		turnRatio = 0.25f * FMath::Sign(turnRatio);
 
-	auto movementPower = ratio * MovementPower * MeshComponent->GetMass() / 6;
-	auto movementVector = movementPower * forward;
+	auto oneWheelAngularImpulse = turnRatio * GetActorRightVector() * 10000;
 
-	MeshComponent->AddForce(movementVector, FName("Wheel_F_R"));
-	MeshComponent->AddForce(movementVector, FName("Wheel_M_R"));
-	MeshComponent->AddForce(movementVector, FName("Wheel_B_R"));
-
-	MeshComponent->AddForce(-movementVector, FName("Wheel_F_L"));
-	MeshComponent->AddForce(-movementVector, FName("Wheel_M_L"));
-	MeshComponent->AddForce(-movementVector, FName("Wheel_B_L"));
+	for (auto body: MeshComponent->Bodies) {
+		if (rightWheels.Contains(body->BodySetup->BoneName)) {
+			body->AddAngularImpulseInRadians(oneWheelAngularImpulse, false);
+		}
+		else if (leftWheels.Contains(body->BodySetup->BoneName)) {
+			body->AddAngularImpulseInRadians(-oneWheelAngularImpulse, false);
+		}
+	}
 
 	return false;
 }
 
+void APlayerBase::MoveToDirection(float moveRatio) {
 
+	auto ratioAbs = FMath::Abs(moveRatio);
+	if (ratioAbs < THRESH_SPLIT_POLY_PRECISELY)
+		return;
+
+	auto onWheelAngularImpulse = moveRatio * GetActorRightVector() * 10000;
+
+	for (auto body : MeshComponent->Bodies) {
+		if (rightWheels.Contains(body->BodySetup->BoneName)) {
+			body->AddAngularImpulseInRadians(onWheelAngularImpulse, false);
+		}
+		else if (leftWheels.Contains(body->BodySetup->BoneName)) {
+			body->AddAngularImpulseInRadians(onWheelAngularImpulse, false);
+		}
+	}
+}
 
 void APlayerBase::NotifyActorBeginOverlap(AActor* OtherActor) {
 	Super::NotifyActorBeginOverlap(OtherActor);
