@@ -4,7 +4,7 @@
 #include "MyProjectWheelFront.h"
 #include "MyProjectWheelRear.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "GameFramework/SpringArmComponent.h"
+#include "Components/LE_RadialArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "WheeledVehicleMovementComponent4W.h"
@@ -61,19 +61,12 @@ AMyProjectPawn::AMyProjectPawn()
 	Vehicle4W->WheelSetups[3].AdditionalOffset = FVector(0.f, 12.f, 0.f);
 
 	// Create a spring arm component
-	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm0"));
-	SpringArm->TargetOffset = FVector(0.f, 0.f, 200.f);
-	SpringArm->SetRelativeRotation(FRotator(-15.f, 0.f, 0.f));
+	SpringArm = CreateDefaultSubobject<ULE_RadialArmComponent>(TEXT("CameraBoom"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 600.0f;
-	SpringArm->bEnableCameraRotationLag = true;
-	SpringArm->CameraRotationLagSpeed = 7.f;
-	SpringArm->bInheritPitch = false;
-	SpringArm->bInheritRoll = false;
 
 	// Create camera component 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera0"));
-	Camera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
+	Camera->SetupAttachment(SpringArm, ULE_RadialArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 	Camera->FieldOfView = 90.f;
 

@@ -8,7 +8,7 @@
 #include "MyProjectPawn.generated.h"
 
 class UCameraComponent;
-class USpringArmComponent;
+class ULE_RadialArmComponent;
 class UInputComponent;
 
 UCLASS(config=Game)
@@ -18,7 +18,7 @@ class AMyProjectPawn : public AWheeledVehicle, public IPhysActor
 
 	/** Spring arm that will offset the camera */
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* SpringArm;
+	ULE_RadialArmComponent* SpringArm;
 
 	/** Camera component that will be our viewpoint */
 	UPROPERTY(Category = Camera, VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -94,7 +94,7 @@ private:
 
 public:
 	/** Returns SpringArm subobject **/
-	FORCEINLINE USpringArmComponent* GetSpringArm() const { return SpringArm; }
+	FORCEINLINE ULE_RadialArmComponent* GetSpringArm() const { return SpringArm; }
 	/** Returns Camera subobject **/
 	FORCEINLINE UCameraComponent* GetCamera() const { return Camera; }
 	/** Returns InternalCamera subobject **/

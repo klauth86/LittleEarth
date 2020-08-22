@@ -6,6 +6,9 @@
 #include "CharacterBase.h"
 #include "PlayerBase.generated.h"
 
+class ULE_RadialArmComponent;
+class UCameraComponent;
+
 UCLASS()
 class APlayerBase : public ACharacterBase {
 
@@ -21,16 +24,16 @@ public:
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class ULE_RadialArmComponent* CameraBoom;
+		ULE_RadialArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-		class UCameraComponent* FollowCamera;
+		UCameraComponent* FollowCamera;
 
 public:
 
-	FORCEINLINE class ULE_RadialArmComponent* GetCameraBoom() const { return CameraBoom; }
+	FORCEINLINE ULE_RadialArmComponent* GetCameraBoom() const { return CameraBoom; }
 
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	void BeginPlay() override;
 
