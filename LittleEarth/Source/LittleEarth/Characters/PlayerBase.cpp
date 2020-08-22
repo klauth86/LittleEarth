@@ -34,8 +34,6 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 }
 
-
-
 static ALE_HUD* hud = nullptr;
 
 void APlayerBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) {
@@ -60,6 +58,11 @@ void APlayerBase::EndPlay(EEndPlayReason::Type EndPlayReason) {
 	Super::EndPlay(EndPlayReason);
 }
 
+void APlayerBase::Tick(float DeltaSeconds) {
+	Super::Tick(DeltaSeconds);
+	ProcessMovementInput();
+}
+
 void APlayerBase::StartJumpInput(bool primaryInput) {
 	if (primaryInput) {
 		//bPrimaryJumpInput = true;
@@ -74,15 +77,17 @@ void APlayerBase::EndJumpInput(bool primaryInput) {
 }
 
 void APlayerBase::MoveForward(float Value) {
-	if ((Controller != NULL) && (Value != 0.0f)) {
-		const FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::X);
+	if (CameraBoom && (Value != 0.0f)) {
+		auto socketRotation = CameraBoom->GetSocketRotation(ULE_RadialArmComponent::SocketName);
+		const FVector Direction = FRotationMatrix(socketRotation).GetUnitAxis(EAxis::X);
 		AddMovementInput(Direction, Value);
 	}
 }
 
 void APlayerBase::MoveRight(float Value) {
-	if ((Controller != NULL) && (Value != 0.0f)) {
-		const FVector Direction = FRotationMatrix(Controller->GetControlRotation()).GetUnitAxis(EAxis::Y);
+	if (CameraBoom && (Value != 0.0f)) {
+		auto socketRotation = CameraBoom->GetSocketRotation(ULE_RadialArmComponent::SocketName);
+		const FVector Direction = FRotationMatrix(socketRotation).GetUnitAxis(EAxis::Y);
 		AddMovementInput(Direction, Value);
 	}
 }

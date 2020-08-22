@@ -51,6 +51,7 @@ void AActor_TestRadialCS::Tick(float DeltaTime) {
 			);
 
 			DrawDebugLine(GetWorld(), start, end, FColor::Red, false, 0, 0, 2.f);
+			DrawDebugSphere(GetWorld(), end, 4, 8, FColor::Blue, false, 0, 0, 2.f);
 
 		}
 	}

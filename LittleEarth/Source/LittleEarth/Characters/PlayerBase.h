@@ -36,10 +36,7 @@ public:
 
 	void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 
-	void Tick(float DeltaSeconds) override { 
-		Super::Tick(DeltaSeconds);
-		ProcessMovementInput();
-	}
+	void Tick(float DeltaSeconds) override;
 
 protected:
 

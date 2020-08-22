@@ -23,16 +23,7 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
-		float HeightOffset = 300.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
-		float BettaAngleInDegrees = 30.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
-		uint32 bCalculateBettaAngle : 1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
-		float BettaAngleArcLength = 600.f;
+		FVector Offset;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Radial Arm")
 		uint32 bEnableCameraLag : 1;
@@ -41,11 +32,10 @@ protected:
 		float CameraLagSpeed;
 
 	FVector SocketLocation = FVector::ZeroVector;
+
 	FRotator SocketRotation;
 	
 	void UpdateSocketTransform(bool enableCameraLag, float DeltaTime);
-
-	bool CalculateBettaAngle(float radius, float arcLength, float& outValue) const;
 
 	// USceneComponent interface
 
