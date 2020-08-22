@@ -151,11 +151,11 @@ void APlayerBase::MoveToDirection(float moveRatio) {
 		auto weight = mass * LE_Common::EARTH_G;
 
 		if (rightWheels.Contains(body->BodySetup->BoneName)) {
-			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel, false);
+			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel * weight, false);
 		}
 		else if (leftWheels.Contains(body->BodySetup->BoneName)) {
 			auto mass = body->GetBodyMass();
-			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel, false);
+			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel * weight, false);
 		}
 	}
 }
