@@ -24,7 +24,7 @@ ACharacterBase::ACharacterBase(const FObjectInitializer& ObjectInitializer) : Su
 	if (MeshComponent) {
 		MeshComponent->BodyInstance.SetCollisionProfileName(UCollisionProfile::PhysicsActor_ProfileName);
 		MeshComponent->SetSimulatePhysics(true);
-		MeshComponent->SetEnableGravity(false); // WE USE RADIAL FIELDS
+		MeshComponent->SetEnableGravity(false); // TODO WE USE RADIAL FIELDS
 		MeshComponent->SetAngularDamping(0.5f);
 		MeshComponent->SetLinearDamping(0.1f);
 		MeshComponent->BodyInstance.MaxAngularVelocity = 800.0f;
