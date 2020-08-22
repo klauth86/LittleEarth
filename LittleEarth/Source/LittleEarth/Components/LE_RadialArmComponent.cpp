@@ -49,7 +49,7 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 		else {
 			SocketLocation = DesiredSocketLoc;
 		}
-
-		SocketRotation = FMatrix(forwardVector, FVector::CrossProduct(upVector, forwardVector), upVector, FVector::ZeroVector).Rotator();
+		
+		SocketRotation = FMatrix((ownerLocation - SocketLocation).GetSafeNormal(), FVector::CrossProduct(upVector, forwardVector), upVector, FVector::ZeroVector).Rotator();
 	}
 }

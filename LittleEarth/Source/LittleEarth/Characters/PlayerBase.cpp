@@ -78,17 +78,13 @@ void APlayerBase::EndJumpInput(bool primaryInput) {
 
 void APlayerBase::MoveForward(float Value) {
 	if (CameraBoom && (Value != 0.0f)) {
-		auto socketRotation = CameraBoom->GetSocketRotation(ULE_RadialArmComponent::SocketName);
-		const FVector Direction = FRotationMatrix(socketRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
+		AddMovementInput(GetActorForwardVector(), Value);
 	}
 }
 
 void APlayerBase::MoveRight(float Value) {
 	if (CameraBoom && (Value != 0.0f)) {
-		auto socketRotation = CameraBoom->GetSocketRotation(ULE_RadialArmComponent::SocketName);
-		const FVector Direction = FRotationMatrix(socketRotation).GetUnitAxis(EAxis::Y);
-		AddMovementInput(Direction, Value);
+		AddMovementInput(GetActorRightVector(), Value);
 	}
 }
 
