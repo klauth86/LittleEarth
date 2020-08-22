@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Utils/LogManager.h"
 #include "DrawDebugHelpers.h"
+#include "Math/Matrix.h"
 
 const FName ULE_RadialArmComponent::SocketName(TEXT("RadialEndpoint"));
 
@@ -49,6 +50,6 @@ void ULE_RadialArmComponent::UpdateSocketTransform(bool enableCameraLag, float D
 			SocketLocation = DesiredSocketLoc;
 		}
 
-		SocketRotation = (ownerLocation - SocketLocation).Rotation();
+		SocketRotation = FMatrix(forwardVector, FVector::CrossProduct(forwardVector, upVector), upVector, FVector::ZeroVector).Rotator;
 	}
 }
