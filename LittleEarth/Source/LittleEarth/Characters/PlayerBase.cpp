@@ -178,7 +178,6 @@ void APlayerBase::MoveToDirection(float moveRatio) {
 			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel * weight, false);
 		}
 		else if (leftWheels.Contains(body->BodySetup->BoneName)) {
-			auto mass = body->GetBodyMass();
 			body->AddAngularImpulseInRadians(angularImpulseDirPerWheel * weight, false);
 		}
 	}

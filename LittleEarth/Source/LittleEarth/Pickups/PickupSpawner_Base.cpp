@@ -3,7 +3,7 @@
 
 #include "PickupSpawner_Base.h"
 #include "GameTasks/GameTaskService.h"
-#include "SpawnProfiles/SpawnProfile_Base.h"
+#include "SpawnProfiles/SpawnProfile_Pickup_Base.h"
 #include "Pickup_Base.h"
 #include "Engine/World.h"
 #include "LE_Common.h"
@@ -21,8 +21,8 @@ void APickupSpawner_Base::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 
 void APickupSpawner_Base::Spawn() {
 	if (SpawnProfileClass) {
-		auto spawnProfile = SpawnProfileClass->GetDefaultObject<USpawnProfile_Base>();
+		auto spawnProfile = SpawnProfileClass->GetDefaultObject<USpawnProfile_Pickup_Base>();
 		auto classToSpawn = spawnProfile->GetClassToSpawn();
-		GetWorld()->SpawnActor<APickup_Base>(classToSpawn);
+		GetWorld()->SpawnActor<APickup_Base>(classToSpawn, GetSpawnTransform());
 	}
 }

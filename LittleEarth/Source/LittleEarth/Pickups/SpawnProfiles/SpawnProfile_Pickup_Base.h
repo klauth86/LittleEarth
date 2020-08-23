@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "SpawnProfile_Base.generated.h"
+#include "SpawnProfile_Pickup_Base.generated.h"
 
 class APickup_Base;
 
 UCLASS()
-class LITTLEEARTH_API USpawnProfile_Base: public UObject {
+class LITTLEEARTH_API USpawnProfile_Pickup_Base: public UObject {
 
 	GENERATED_BODY()
 
