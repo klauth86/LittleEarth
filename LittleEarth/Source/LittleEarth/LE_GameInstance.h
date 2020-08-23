@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Engine/EngineTypes.h"
 #include "Score/LE_GameState.h"
 #include "LE_GameInstance.generated.h"
 
@@ -28,6 +29,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void EndOpenLevel(const FLE_GameState& startState);
 
+
+
+// Game persistent state
+public:
+
 	FCurrentStateChangedEvent OnCurrentStateChanged;
 
 	int AddStars(int stars) {
@@ -43,10 +49,24 @@ public:
 
 		return CurrentState.TimeToSucceed;
 	}
-
+	
 protected:
 
 	UPROPERTY(BlueprintReadOnly)
-	FLE_GameState CurrentState;
+		FLE_GameState CurrentState;
 
+
+
+// Game Tasks Poll
+public:
+
+	void StartPoll(UWorld* world);
+
+	void StopPoll(UWorld* world);
+
+	void OnPoll();
+
+protected:
+
+	FTimerHandle TimerHandle_Poll;
 };

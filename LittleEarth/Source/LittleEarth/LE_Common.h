@@ -10,4 +10,6 @@ namespace LE_Common {
 
 	extern const uint8 EXECUTE_INFINIT_TIMES;
 
+	extern const float POLL_RATE;
+
 }

@@ -2,6 +2,8 @@
 
 
 #include "LE_GameInstance.h"
+#include "Engine/World.h"
+#include "GameTasks/GameTaskService.h"
 
 static ULE_GameInstance* Instance = nullptr;
 
@@ -34,4 +36,17 @@ void ULE_GameInstance::EndOpenLevel(const FLE_GameState& startState) {
 	CurrentState.Reset(startState);
 	OnCurrentStateChanged.Broadcast();
 
+}
+
+void ULE_GameInstance::StartPoll(UWorld* world) {
+	world->GetTimerManager().SetTimer(TimerHandle_Poll, this, &ULE_GameInstance::OnPoll, LE_Common::POLL_RATE, true);
+}
+
+void ULE_GameInstance::StopPoll(UWorld* world) {
+	world->GetTimerManager().ClearTimer(TimerHandle_Poll);
+	GameTaskService::Reset();
+}
+
+void ULE_GameInstance::OnPoll() {
+	GameTaskService::Advance(LE_Common::POLL_RATE);
 }
