@@ -3,6 +3,7 @@
 #include "PlayerBase.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/LE_RadialArmComponent.h"
+#include "Components/PointLightComponent.h"
 #include "Camera/CameraComponent.h"
 
 #include "GameFramework/Controller.h"
@@ -16,6 +17,8 @@
 #include "EngineUtils.h"
 #include "Utils/InputBindingsHelper.h"
 #include "Utils/LogManager.h"
+
+const FName APlayerBase::HeadlightSocketName(TEXT("HeadlightSocket"));
 
 APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer) {
 
@@ -33,6 +36,10 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, ULE_RadialArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
+
+	Headlight = CreateDefaultSubobject<UPointLightComponent>("Headlight");
+	Headlight->SetupAttachment(MeshComponent, APlayerBase::HeadlightSocketName);
+	Headlight->SetVisibility(false);
 }
 
 static ALE_HUD* hud = nullptr;
@@ -46,6 +53,8 @@ void APlayerBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputCo
 
 	PlayerInputComponent->BindAction("Brake", IE_Pressed, this, &APlayerBase::StartBraking);
 	PlayerInputComponent->BindAction("Brake", IE_Released, this, &APlayerBase::EndBraking);
+
+	PlayerInputComponent->BindAction("Headlight", IE_Pressed, this, &APlayerBase::ToggleHeadlight);
 
 	if (auto controller = Cast<APlayerController>(Controller)) {
 		hud = Cast<ALE_HUD>(controller->GetHUD());
@@ -92,9 +101,12 @@ void APlayerBase::MoveRight(float Value) {
 	}
 }
 
+void APlayerBase::ToggleHeadlight() {
+	if (Headlight) { Headlight->ToggleVisibility(); }
+}
+
 const auto rightWheels = TArray<FName>({ FName("Wheel_F_R") , FName("Wheel_M_R") , FName("Wheel_B_R") });
 const auto leftWheels = TArray<FName>({ FName("Wheel_F_L") , FName("Wheel_M_L") , FName("Wheel_B_L") });
-
 const int angularVelocityMultiplier = 4;
 
 void APlayerBase::ProcessMovementInput() {

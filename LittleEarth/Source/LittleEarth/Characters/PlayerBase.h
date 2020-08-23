@@ -8,6 +8,7 @@
 
 class ULE_RadialArmComponent;
 class UCameraComponent;
+class UPointLightComponent;
 
 UCLASS()
 class APlayerBase : public ACharacterBase {
@@ -21,6 +22,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MovementEngine)
 		float MovementPower;
 
+	static const FName HeadlightSocketName;
+
 protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -28,6 +31,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		UPointLightComponent* Headlight;
 
 	uint8 IsBraking : 1;
 
@@ -60,6 +66,8 @@ protected:
 	void MoveForward(float Value);
 
 	void MoveRight(float Value);
+
+	void ToggleHeadlight();
 
 	void ProcessMovementInput();
 
