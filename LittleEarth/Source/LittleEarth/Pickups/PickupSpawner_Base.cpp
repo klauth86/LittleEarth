@@ -4,6 +4,7 @@
 #include "PickupSpawner_Base.h"
 #include "GameTasks/GameTaskService.h"
 #include "SpawnProfiles/SpawnProfile_Pickup_Base.h"
+#include "SpawnProfiles/SpawnProfile_Transform_Base.h"
 #include "Pickup_Base.h"
 #include "Engine/World.h"
 #include "LE_Common.h"
@@ -20,9 +21,14 @@ void APickupSpawner_Base::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 }
 
 void APickupSpawner_Base::Spawn() {
-	if (SpawnProfileClass) {
-		auto spawnProfile = SpawnProfileClass->GetDefaultObject<USpawnProfile_Pickup_Base>();
+	if (PickupProfileClass) {
+		auto spawnProfile = PickupProfileClass->GetDefaultObject<USpawnProfile_Pickup_Base>();
 		auto classToSpawn = spawnProfile->GetClassToSpawn();
-		GetWorld()->SpawnActor<APickup_Base>(classToSpawn, GetSpawnTransform());
+
+		auto spawnTranform = FTransform::Identity;
+		if (TransformProfileClass)
+			spawnTranform = TransformProfileClass->GetDefaultObject<USpawnProfile_Transform_Base>()->GetSpawnTransform();
+
+		GetWorld()->SpawnActor<APickup_Base>(classToSpawn, spawnTranform);
 	}
 }

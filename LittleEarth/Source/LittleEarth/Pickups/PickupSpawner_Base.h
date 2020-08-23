@@ -8,6 +8,7 @@
 #include "PickupSpawner_Base.generated.h"
 
 class USpawnProfile_Pickup_Base;
+class USpawnProfile_Transform_Base;
 
 UCLASS()
 class LITTLEEARTH_API APickupSpawner_Base : public AActor {
@@ -23,7 +24,10 @@ protected:
 		bool SpawnInfinitely = false;
 
 	UPROPERTY(EditAnywhere, Category = "Pickup Spawner")
-		TSubclassOf<USpawnProfile_Pickup_Base> SpawnProfileClass;
+		TSubclassOf<USpawnProfile_Pickup_Base> PickupProfileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Pickup Spawner")
+		TSubclassOf<USpawnProfile_Transform_Base> TransformProfileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Pickup Spawner") // TODO DISABLE IN EDITOR IF SpawnInfinitely
 		uint8 NumToSpawn = 1;
@@ -39,7 +43,5 @@ public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void Spawn();
-
-	virtual FTransform GetSpawnTransform() const { return FTransform::Identity; }
 
 };
