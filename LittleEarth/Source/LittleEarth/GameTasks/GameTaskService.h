@@ -19,6 +19,14 @@ public:
 		Tasks.Empty();
 	}
 
+	static void RemoveGameTask(FGuid id) {
+		FScopeLock Lock(&Locker);
+
+		if (Tasks.Contains(id)) {
+			Tasks.Remove(id);
+		}
+	}
+
 	static void Advance(float DeltaSeconds) {
 		FScopeLock Lock(&Locker);
 
