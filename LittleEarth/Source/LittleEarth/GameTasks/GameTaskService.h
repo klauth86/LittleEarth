@@ -58,6 +58,7 @@ public:
 	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, UserClass* InObj, typename FTimerDelegate::TUObjectMethodDelegate< UserClass >::FMethodPtr InTimerMethod, uint8 numToExecute = 1) {
 		return AddGameTask_Internal(DeltaSeconds, FTimerUnifiedDelegate(FTimerDelegate::CreateUObject(InObj, InTimerMethod)), numToExecute);
 	}
+	
 	template< class UserClass >
 	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, UserClass* InObj, typename FTimerDelegate::TUObjectMethodDelegate_Const< UserClass >::FMethodPtr InTimerMethod, uint8 numToExecute = 1) {
 		return AddGameTask_Internal(DeltaSeconds, FTimerUnifiedDelegate(FTimerDelegate::CreateUObject(InObj, InTimerMethod)), numToExecute);

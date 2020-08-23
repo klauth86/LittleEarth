@@ -3,6 +3,9 @@
 
 #include "PickupSpawner_Base.h"
 #include "GameTasks/GameTaskService.h"
+#include "SpawnProfiles/SpawnProfile_Base.h"
+#include "Pickup_Base.h"
+#include "Engine/World.h"
 #include "LE_Common.h"
 
 void APickupSpawner_Base::BeginPlay() {
@@ -16,3 +19,10 @@ void APickupSpawner_Base::EndPlay(const EEndPlayReason::Type EndPlayReason) {
 	GameTaskService::RemoveGameTask(GameTaskId);
 }
 
+void APickupSpawner_Base::Spawn() {
+	if (SpawnProfileClass) {
+		auto spawnProfile = SpawnProfileClass->GetDefaultObject<USpawnProfile_Base>();
+		auto classToSpawn = spawnProfile->GetClassToSpawn();
+		GetWorld()->SpawnActor<APickup_Base>(classToSpawn);
+	}
+}
