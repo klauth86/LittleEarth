@@ -38,7 +38,7 @@ public:
 				task.Delegate.Execute();
 
 			task.PostAdvance();
-			if (task.NumToExecute <= 0)
+			if (task.TimeLeft <= 0)
 				It.RemoveCurrent();
 		}
 	}
@@ -55,31 +55,31 @@ public:
 	}
 
 	template< class UserClass >
-	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, UserClass* InObj, typename FTimerDelegate::TUObjectMethodDelegate< UserClass >::FMethodPtr InTimerMethod, uint8 numToExecute = 1) {
+	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, UserClass* InObj, typename FTimerDelegate::TUObjectMethodDelegate< UserClass >::FMethodPtr InTimerMethod, int8 numToExecute = 1) {
 		return AddGameTask_Internal(DeltaSeconds, FTimerUnifiedDelegate(FTimerDelegate::CreateUObject(InObj, InTimerMethod)), numToExecute);
 	}
 	
 	template< class UserClass >
-	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, UserClass* InObj, typename FTimerDelegate::TUObjectMethodDelegate_Const< UserClass >::FMethodPtr InTimerMethod, uint8 numToExecute = 1) {
+	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, UserClass* InObj, typename FTimerDelegate::TUObjectMethodDelegate_Const< UserClass >::FMethodPtr InTimerMethod, int8 numToExecute = 1) {
 		return AddGameTask_Internal(DeltaSeconds, FTimerUnifiedDelegate(FTimerDelegate::CreateUObject(InObj, InTimerMethod)), numToExecute);
 	}
 
 	/** Version that takes any generic delegate. */
-	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, FTimerDelegate const& InDelegate, uint8 numToExecute = 1) {
+	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, FTimerDelegate const& InDelegate, int8 numToExecute = 1) {
 		return AddGameTask_Internal(DeltaSeconds, FTimerUnifiedDelegate(InDelegate), numToExecute);
 	}
 	/** Version that takes a dynamic delegate (e.g. for UFunctions). */
-	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, FTimerDynamicDelegate const& InDynDelegate, uint8 numToExecute = 1) {
+	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, FTimerDynamicDelegate const& InDynDelegate, int8 numToExecute = 1) {
 		return AddGameTask_Internal(DeltaSeconds, FTimerUnifiedDelegate(InDynDelegate), numToExecute);
 	}
 	/** Version that takes a TFunction */
-	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, TFunction<void(void)>&& Callback, uint8 numToExecute = 1) {
+	FORCEINLINE static FGuid AddGameTask(float DeltaSeconds, TFunction<void(void)>&& Callback, int8 numToExecute = 1) {
 		return AddGameTask_Internal(DeltaSeconds, FTimerUnifiedDelegate(MoveTemp(Callback)), numToExecute);
 	}
 
 protected:
 
-	static FGuid AddGameTask_Internal(float inDeltaSeconds, FTimerUnifiedDelegate&& InDelegate, uint8 numToExecute) {
+	static FGuid AddGameTask_Internal(float inDeltaSeconds, FTimerUnifiedDelegate&& InDelegate, int8 numToExecute) {
 		FScopeLock Lock(&Locker);
 
 		auto key = FGuid::NewGuid();

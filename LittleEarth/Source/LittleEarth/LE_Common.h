@@ -8,7 +8,7 @@ namespace LE_Common {
 
 	extern const float EARTH_G;
 
-	extern const uint8 EXECUTE_INFINIT_TIMES;
+	extern const int8 EXECUTE_INFINIT_TIMES;
 
 	extern const float POLL_RATE;
 

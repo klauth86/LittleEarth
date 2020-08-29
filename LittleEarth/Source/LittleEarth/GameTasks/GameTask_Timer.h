@@ -10,23 +10,24 @@ struct FGameTask_Timer {
 
 	float TimeLeft;
 
-	uint8 NumToExecute;
+	int8 NumToExecute;
 
-	uint8 NumToExecuteLeft;
+	int8 NumToExecuteLeft;
 
 	FTimerUnifiedDelegate Delegate;
+
+	bool IsInfinit() { return NumToExecute == LE_Common::EXECUTE_INFINIT_TIMES; }
 
 	void Advance(float DeltaSeconds) {		
 		TimeLeft -= DeltaSeconds;
 		if (TimeLeft <= 0) {
-
-			if (NumToExecute != LE_Common::EXECUTE_INFINIT_TIMES) // DECREMENT IF NOT INFINIT
+			if (!IsInfinit()) // DECREMENT IF NOT INFINIT
 				NumToExecuteLeft--;
 		}
 	};
 
 	void PostAdvance() {
-		if (NumToExecuteLeft > 0) {
+		if (NumToExecuteLeft > 0 || IsInfinit()) {
 			TimeLeft = Time;
 		}
 	}

@@ -30,7 +30,7 @@ protected:
 		TSubclassOf<USpawnProfile_Transform_Base> TransformProfileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Pickup Spawner") // TODO DISABLE IN EDITOR IF SpawnInfinitely
-		uint8 NumToSpawn = 1;
+		int8 NumToSpawn = 1;
 
 	FGuid GameTaskId;
 
