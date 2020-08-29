@@ -17,5 +17,5 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup Item")
-		float TimeToAdd;
+		float TimeToAdd = 10;
 };

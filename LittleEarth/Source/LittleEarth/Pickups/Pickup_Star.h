@@ -17,6 +17,6 @@ public:
 protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Pickup Item")
-		int StarsToPick;
+		int StarsToPick = 1;
 
 };

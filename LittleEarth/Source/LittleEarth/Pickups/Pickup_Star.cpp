@@ -5,10 +5,10 @@
 #include "LE_GameInstance.h"
 
 void APickup_Star::PickUp() {
-
-	Super::PickUp();
-
+	
 	if (auto instance = ULE_GameInstance::GetInstance()) {
 		instance->AddStars(StarsToPick);
 	}
+
+	Super::PickUp();
 }

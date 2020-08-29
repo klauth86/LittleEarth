@@ -6,9 +6,9 @@
 
 void APickup_Time::PickUp() {
 
-	Super::PickUp();
-
 	if (auto instance = ULE_GameInstance::GetInstance()) {
 		instance->AddTime(TimeToAdd);
 	}
+
+	Super::PickUp();
 }
