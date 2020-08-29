@@ -15,13 +15,17 @@ class LITTLEEARTH_API APickup_Base : public AActor {
 	GENERATED_BODY()
 
 public:
-	
-	virtual void PickUp() {	
 
-		Destroy();
-		// TODO ADD SFX TO PLAY
-		// TODO ADD VFX TO PLAY
+	void BeginPlay() override;
 
-	}
+	virtual void PickUp();
+
+protected:
+
+	TSubclassOf<AActor> Spawn_VFXClass = nullptr;
+	USoundBase* Spawn_SFX = nullptr;
+
+	TSubclassOf<AActor> PickUp_VFXClass;
+	USoundBase* PickUp_SFX = nullptr;
 
 };
