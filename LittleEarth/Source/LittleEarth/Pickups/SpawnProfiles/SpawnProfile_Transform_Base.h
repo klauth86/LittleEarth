@@ -6,7 +6,7 @@
 #include "UObject/Object.h"
 #include "SpawnProfile_Transform_Base.generated.h"
 
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class LITTLEEARTH_API USpawnProfile_Transform_Base: public UObject {
 
 	GENERATED_BODY()

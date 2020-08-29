@@ -8,7 +8,7 @@
 
 class APickup_Base;
 
-UCLASS()
+UCLASS(BlueprintType)
 class LITTLEEARTH_API USpawnProfile_Pickup_Base: public UObject {
 
 	GENERATED_BODY()
