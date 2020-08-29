@@ -34,12 +34,14 @@ public:
 			auto& task = It->Value;
 
 			task.Advance(DeltaSeconds);
-			if (task.TimeLeft <= 0)
+			if (task.TimeLeft <= 0) {
+				
 				task.Delegate.Execute();
 
-			task.PostAdvance();
-			if (task.TimeLeft <= 0)
-				It.RemoveCurrent();
+				task.PostAdvance();
+				if (task.TimeLeft <= 0)
+					It.RemoveCurrent();
+			}
 		}
 	}
 
