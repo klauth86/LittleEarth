@@ -29,7 +29,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void EndOpenLevel(const FLE_GameState& startState);
 
-
+	UFUNCTION(BlueprintCallable)
+		void StartOpenLevel(const FLE_GameState& startState);
 
 // Game persistent state
 public:
