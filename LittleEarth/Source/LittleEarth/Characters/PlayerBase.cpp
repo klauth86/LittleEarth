@@ -4,6 +4,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/LE_RadialArmComponent.h"
 #include "Components/PointLightComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Camera/CameraComponent.h"
 
 #include "GameFramework/Controller.h"
@@ -41,6 +42,13 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 	Headlight = CreateDefaultSubobject<UPointLightComponent>("Headlight");
 	Headlight->SetupAttachment(MeshComponent, APlayerBase::HeadlightSocketName);
 	Headlight->SetVisibility(false);
+
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent");
+	CapsuleComponent->SetupAttachment(MeshComponent);
+	CapsuleComponent->SetCapsuleRadius(100);
+	CapsuleComponent->SetCapsuleHalfHeight(100);
+	CapsuleComponent->SetCollisionProfileName(LE_Common::OverlapAll_ProfileName);
+	CapsuleComponent->SetCanEverAffectNavigation(false);
 }
 
 static ALE_HUD* hud = nullptr;

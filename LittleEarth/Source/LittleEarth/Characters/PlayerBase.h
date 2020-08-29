@@ -10,6 +10,7 @@
 class ULE_RadialArmComponent;
 class UCameraComponent;
 class UPointLightComponent;
+class UCapsuleComponent;
 
 UCLASS()
 class APlayerBase : public ACharacterBase {
@@ -39,6 +40,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		UPointLightComponent* Headlight;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		UCapsuleComponent* CapsuleComponent;
+
 	uint8 IsBraking : 1;
 
 	uint8 JetPackCycles_Max = 8;
@@ -52,6 +56,10 @@ public:
 	FORCEINLINE ULE_RadialArmComponent* GetCameraBoom() const { return CameraBoom; }
 
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	FORCEINLINE UPointLightComponent* GetHeadlight() const { return Headlight; }
+
+	FORCEINLINE UCapsuleComponent* GetCapsule() const { return CapsuleComponent; }
 
 	void BeginPlay() override;
 

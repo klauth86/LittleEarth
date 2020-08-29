@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Platform.h"
+#include "NameTypes.h"
 
 namespace LE_Common {
 
@@ -12,4 +13,5 @@ namespace LE_Common {
 
 	extern const float POLL_RATE;
 
+	extern const FName OverlapAll_ProfileName;
 }
