@@ -58,5 +58,6 @@ void ULE_GameInstance::StopPoll(UWorld* world) {
 
 void ULE_GameInstance::OnPoll() {
 	GameTaskService::Advance(LE_Common::POLL_RATE);
+	AddTime(-LE_Common::POLL_RATE);
 	LogManager::LogWarning(TEXT("ULE_GameInstance::OnPoll"));
 }

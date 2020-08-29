@@ -11,8 +11,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCurrentStateChangedEvent);
 
 UCLASS()
-class LITTLEEARTH_API ULE_GameInstance : public UGameInstance
-{
+class LITTLEEARTH_API ULE_GameInstance : public UGameInstance {
+
 	GENERATED_BODY()
 	
 public:
