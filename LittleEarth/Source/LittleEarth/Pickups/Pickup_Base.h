@@ -39,14 +39,25 @@ public:
 
 	void BeginPlay() override;
 
+	void Tick(float DeltaSeconds) override;
+
 	virtual void PickUp();
 
 protected:
 
+	UPROPERTY(EditAnywhere, Category = "PickUp")
 	TSubclassOf<AActor> Spawn_VFXClass = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
 	USoundBase* Spawn_SFX = nullptr;
 
+	UPROPERTY(EditAnywhere, Category = "PickUp")
 	TSubclassOf<AActor> PickUp_VFXClass;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
 	USoundBase* PickUp_SFX = nullptr;
+
+	UPROPERTY(EditAnywhere, Category = "PickUp")
+	FRotator AngularVelocity;
 
 };

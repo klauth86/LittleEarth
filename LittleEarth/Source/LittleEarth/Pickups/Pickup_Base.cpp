@@ -20,6 +20,10 @@ APickup_Base::APickup_Base() {
 	StaticMeshComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	StaticMeshComponent->SetCanEverAffectNavigation(false);
 	StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+	PrimaryActorTick.bCanEverTick = true;
+
+	AngularVelocity = FRotator(0, 0, 180);
 }
 
 void APickup_Base::BeginPlay() {
@@ -34,6 +38,12 @@ void APickup_Base::BeginPlay() {
 
 	if (Spawn_SFX)
 		UGameplayStatics::PlaySoundAtLocation(world, PickUp_SFX, GetActorLocation());
+}
+
+void APickup_Base::Tick(float DeltaSeconds) {
+	Super::Tick(DeltaSeconds);
+
+	SetActorRotation(GetActorRotation() + DeltaSeconds * AngularVelocity);
 }
 
 void APickup_Base::PickUp() {

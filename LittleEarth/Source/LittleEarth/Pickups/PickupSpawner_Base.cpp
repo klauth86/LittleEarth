@@ -25,10 +25,11 @@ void APickupSpawner_Base::Spawn() {
 		auto spawnProfile = PickupProfileClass->GetDefaultObject<USpawnProfile_Pickup_Base>();
 		auto classToSpawn = spawnProfile->GetClassToSpawn();
 
-		auto spawnTranform = FTransform::Identity;
+		auto spawnTransform = FTransform::Identity;
 		if (TransformProfileClass)
-			spawnTranform = TransformProfileClass->GetDefaultObject<USpawnProfile_Transform_Base>()->GetSpawnTransform();
+			spawnTransform = TransformProfileClass->GetDefaultObject<USpawnProfile_Transform_Base>()->GetSpawnTransform();
 
-		GetWorld()->SpawnActor<APickup_Base>(classToSpawn, spawnTranform);
+		spawnTransform.SetRotation(spawnTransform.GetLocation().ToOrientationQuat());
+		GetWorld()->SpawnActor<APickup_Base>(classToSpawn, spawnTransform);
 	}
 }
