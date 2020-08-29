@@ -2,8 +2,24 @@
 
 
 #include "Pickup_Base.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Engine/CollisionProfile.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
+
+APickup_Base::APickup_Base() {
+	SetRootComponent(CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>("CapsuleComponent"));
+	CapsuleComponent->SetCapsuleRadius(100);
+	CapsuleComponent->SetCapsuleHalfHeight(100);
+	CapsuleComponent->SetCollisionProfileName(FName(TEXT("OverlapOnlyPawn")));
+	CapsuleComponent->SetCanEverAffectNavigation(false);
+
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
+	StaticMeshComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	StaticMeshComponent->SetCanEverAffectNavigation(false);
+	StaticMeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+}
 
 void APickup_Base::BeginPlay() {
 	Super::BeginPlay();

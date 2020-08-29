@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "Pickup_Base.generated.h"
 
+class UCapsuleComponent;
+class UStaticMeshComponent;
+
 /**
  * 
  */
@@ -13,6 +16,24 @@ UCLASS()
 class LITTLEEARTH_API APickup_Base : public AActor {
 
 	GENERATED_BODY()
+
+public:
+
+	APickup_Base();
+
+protected:
+
+	UPROPERTY(Category = "PickUp", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UCapsuleComponent* CapsuleComponent;
+
+	UPROPERTY(Category = "PickUp", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UStaticMeshComponent* StaticMeshComponent;
+
+public:
+
+	FORCEINLINE UCapsuleComponent* GetCapsuleComponent() { return CapsuleComponent; };
+
+	FORCEINLINE UStaticMeshComponent* GetStaticMeshComponent() { return StaticMeshComponent; };
 
 public:
 

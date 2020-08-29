@@ -23,6 +23,7 @@ const FName APlayerBase::HeadlightSocketName(TEXT("HeadlightSocket"));
 APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(ObjectInitializer) {
 
 	MovementPower = 1;
+	JetPackPower = 2;
 
 	// Don't rotate when the controller rotates.
 	bUseControllerRotationPitch = false;
@@ -45,7 +46,7 @@ APlayerBase::APlayerBase(const FObjectInitializer& ObjectInitializer) :Super(Obj
 static ALE_HUD* hud = nullptr;
 
 void APlayerBase::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) {
-	//PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APlayerBase::StartJumpInput);
 	//PlayerInputComponent->BindAction("Jump", IE_Released, this, &APlayerBase::StopJumping);
 
 	PlayerInputComponent->BindAxis("MoveForward", this, &APlayerBase::MoveForward);
@@ -74,18 +75,13 @@ void APlayerBase::EndPlay(EEndPlayReason::Type EndPlayReason) {
 void APlayerBase::Tick(float DeltaSeconds) {
 	Super::Tick(DeltaSeconds);
 	ProcessMovementInput();
+	ProcessJumpInput();
 }
 
-void APlayerBase::StartJumpInput(bool primaryInput) {
-	if (primaryInput) {
-		//bPrimaryJumpInput = true;
-	}
-	//StartJump();
-}
-
-void APlayerBase::EndJumpInput(bool primaryInput) {
-	if (primaryInput) {
-		//bPrimaryJumpInput = false;
+void APlayerBase::StartJumpInput() {
+	if (JetPackCycles_Current < JetPackCycles_Max) {
+		JetPackCycles.Enqueue(1);
+		JetPackCycles_Current++;
 	}
 }
 
@@ -105,6 +101,7 @@ void APlayerBase::ToggleHeadlight() {
 	if (Headlight) { Headlight->ToggleVisibility(); }
 }
 
+const FName mainBody("Body");
 const auto rightWheels = TArray<FName>({ FName("Wheel_F_R") , FName("Wheel_M_R") , FName("Wheel_B_R") });
 const auto leftWheels = TArray<FName>({ FName("Wheel_F_L") , FName("Wheel_M_L") , FName("Wheel_B_L") });
 const int angularVelocityMultiplier = 4;
@@ -133,6 +130,20 @@ void APlayerBase::ProcessMovementInput() {
 
 		TurnToDirection(turnRatio);
 		MoveToDirection(moveRatio);
+	}
+}
+
+void APlayerBase::ProcessJumpInput() {
+	uint8 cycleIndex;
+	while (JetPackCycles.Dequeue(cycleIndex)) {
+		JetPackCycles_Current--;
+
+		auto body = MeshComponent->GetBodyInstance(mainBody);
+
+		auto mass = body->GetBodyMass();
+		auto weight = mass * LE_Common::EARTH_G;
+
+		body->AddForce(GetActorUpVector() * weight * JetPackPower);
 	}
 }
 

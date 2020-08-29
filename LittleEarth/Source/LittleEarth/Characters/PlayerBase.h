@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
+#include "Containers/Queue.h"
 #include "PlayerBase.generated.h"
 
 class ULE_RadialArmComponent;
@@ -22,6 +23,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MovementEngine)
 		float MovementPower;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = MovementEngine)
+		float JetPackPower;
+
 	static const FName HeadlightSocketName;
 
 protected:
@@ -36,6 +40,12 @@ protected:
 		UPointLightComponent* Headlight;
 
 	uint8 IsBraking : 1;
+
+	uint8 JetPackCycles_Max = 8;
+
+	uint8 JetPackCycles_Current = 0;
+
+	TQueue<uint8> JetPackCycles;
 
 public:
 
@@ -54,10 +64,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UFUNCTION()
-	void StartJumpInput(bool primaryInput);
-	
-	UFUNCTION()
-	void EndJumpInput(bool primaryInput);
+	void StartJumpInput();
 
 	void StartBraking() { AddOrRemoveBrakingInertia(IsBraking = true); }
 
@@ -70,6 +77,8 @@ protected:
 	void ToggleHeadlight();
 
 	void ProcessMovementInput();
+
+	void ProcessJumpInput();
 
 	bool TurnToDirection(float turnRatio);
 
